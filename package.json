@@ -3,24 +3,24 @@
   "version": "0.1.0",
   "description": "Ergonomic progress indicators for Node.js CLI and React TUI apps",
   "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "import": "./src/index.ts",
+      "types": "./src/index.ts"
     },
     "./cli": {
-      "import": "./dist/cli/index.js",
-      "types": "./dist/cli/index.d.ts"
+      "import": "./src/cli/index.ts",
+      "types": "./src/cli/index.ts"
     },
     "./react": {
-      "import": "./dist/react/index.js",
-      "types": "./dist/react/index.d.ts"
+      "import": "./src/react/index.ts",
+      "types": "./src/react/index.ts"
     },
     "./wrappers": {
-      "import": "./dist/wrappers/index.js",
-      "types": "./dist/wrappers/index.d.ts"
+      "import": "./src/wrappers/index.ts",
+      "types": "./src/wrappers/index.ts"
     }
   },
   "files": [
