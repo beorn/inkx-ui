@@ -8,12 +8,20 @@
 
 import type { ProgressInfo, ProgressCallback, WithProgressOptions } from "../types.js";
 import { ProgressBar } from "../cli/progress-bar.js";
+import { Spinner } from "../cli/spinner.js";
 import {
   CURSOR_HIDE,
   CURSOR_SHOW,
   write,
   isTTY,
 } from "../cli/ansi.js";
+
+// Declare timer globals (not exposed by bun-types)
+declare function setTimeout(callback: () => void, ms: number): unknown;
+declare function clearTimeout(id: unknown): void;
+
+// Timer type - opaque handle, we only store and clear it
+type TimerId = unknown;
 
 /**
  * Wrap a function that takes a progress callback
@@ -40,6 +48,12 @@ import {
  *   (p) => processFiles(p),
  *   { format: ":phase :bar :percent" }
  * );
+ *
+ * // Show loading immediately (showAfter: 0) or after delay
+ * await withProgress(
+ *   (p) => slowOperation(p),
+ *   { showAfter: 1000, initialMessage: "Loading..." }
+ * );
  * ```
  */
 export async function withProgress<T>(
@@ -65,12 +79,38 @@ export async function withProgress<T>(
   let lastPhase: string | null = null;
   let started = false;
 
+  // Initial spinner (shown before progress starts)
+  const showAfter = options.showAfter ?? 1000;
+  const initialMessage = options.initialMessage ?? "Loading...";
+  let spinner: Spinner | null = null;
+  let spinnerTimerId: TimerId | null = null;
+
   // Hide cursor
   if (isTty) {
     write(CURSOR_HIDE, stream);
   }
 
+  // Schedule initial spinner if configured
+  if (isTty && showAfter >= 0) {
+    spinnerTimerId = setTimeout(() => {
+      if (!started) {
+        spinner = new Spinner({ text: initialMessage });
+        spinner.start();
+      }
+    }, showAfter);
+  }
+
   const onProgress: ProgressCallback = (info: ProgressInfo) => {
+    // Stop initial spinner if it was shown
+    if (spinner) {
+      spinner.stop();
+      spinner = null;
+    }
+    if (spinnerTimerId !== null) {
+      clearTimeout(spinnerTimerId);
+      spinnerTimerId = null;
+    }
+
     // Handle phase transitions
     if (info.phase && info.phase !== lastPhase) {
       if (lastPhase !== null && isTty) {
@@ -97,6 +137,14 @@ export async function withProgress<T>(
   try {
     const result = await fn(onProgress);
 
+    // Clean up spinner if still pending
+    if (spinnerTimerId !== null) {
+      clearTimeout(spinnerTimerId);
+    }
+    if (spinner) {
+      spinner.stop();
+    }
+
     // Stop and show cursor
     if (started) {
       bar.stop(options.clearOnComplete);
@@ -107,6 +155,14 @@ export async function withProgress<T>(
 
     return result;
   } catch (error) {
+    // Clean up spinner
+    if (spinnerTimerId !== null) {
+      clearTimeout(spinnerTimerId);
+    }
+    if (spinner) {
+      spinner.stop();
+    }
+
     // Restore cursor on error
     if (started) {
       bar.stop();
