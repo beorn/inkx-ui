@@ -27,7 +27,7 @@ const STATUS_ICONS: Record<TaskStatus, string> = {
 /** Task configuration */
 interface TaskConfig {
   title: string;
-  type: "spinner" | "bar";
+  type: "spinner" | "bar" | "group";
   status: TaskStatus;
   total?: number;
   current?: number;
@@ -38,6 +38,8 @@ interface TaskConfig {
 /** Internal task state */
 interface TaskState extends TaskConfig {
   id: string;
+  /** Completion time in ms (shown dimmed after title on completion) */
+  completionTime?: number;
 }
 
 /**
@@ -80,7 +82,7 @@ export class MultiProgress {
   add(
     title: string,
     options: {
-      type?: "spinner" | "bar";
+      type?: "spinner" | "bar" | "group";
       total?: number;
       spinnerStyle?: SpinnerStyle;
       indent?: number;
@@ -218,8 +220,13 @@ export class MultiProgress {
 
       let icon: string;
       if (task.status === "running") {
-        const frames = SPINNER_FRAMES[task.spinnerStyle ?? "dots"];
-        icon = chalk.cyan(frames[this.frameIndex % frames.length]);
+        if (task.type === "group") {
+          // Groups don't animate - keep pending icon while running
+          icon = STATUS_ICONS.pending;
+        } else {
+          const frames = SPINNER_FRAMES[task.spinnerStyle ?? "dots"];
+          icon = chalk.cyan(frames[this.frameIndex % frames.length]);
+        }
       } else {
         icon = STATUS_ICONS[task.status];
       }
@@ -236,6 +243,11 @@ export class MultiProgress {
         const bar =
           chalk.cyan("█".repeat(filled)) + chalk.gray("░".repeat(empty));
         line += ` ${bar} ${Math.round(percent * 100)}%`;
+      }
+
+      // Add completion time in dimmed text
+      if (task.status === "completed" && task.completionTime !== undefined) {
+        line += chalk.dim(` ${task.completionTime}ms`);
       }
 
       lines.push(line);
@@ -277,9 +289,15 @@ class TaskHandle {
   }
 
   /** Mark task as completed */
-  complete(title?: string): this {
+  complete(titleOrTime?: string | number): this {
     const updates: Partial<TaskState> = { status: "completed" };
-    if (title) updates.title = title;
+    if (typeof titleOrTime === "number") {
+      // Numeric = completion time in ms (preserves current title)
+      updates.completionTime = titleOrTime;
+    } else if (titleOrTime) {
+      // String = new title (legacy behavior)
+      updates.title = titleOrTime;
+    }
     this.multi._updateTask(this._id, updates);
     return this;
   }

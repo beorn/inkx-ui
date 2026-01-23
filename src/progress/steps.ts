@@ -1,40 +1,63 @@
 /**
- * Fluent sequential step runner with progress display
+ * Sequential step runner with progress display
  *
- * Supports sync functions, async functions, sync generators, and async generators.
- * Generators can yield sub-step progress:
- * - Yield a **string** to create a new sub-step
- * - Yield an **object** `{ current, total }` to update progress on current sub-step
+ * Supports two modes:
  *
- * @example
+ * ## Declarative Mode (recommended)
+ *
+ * Pass an object to declare all steps upfront:
+ *
  * ```typescript
- * import { steps } from "@beorn/inkx-ui/progress";
+ * import { steps, step } from "@beorn/inkx-ui/progress";
  *
- * // Simple async function
+ * const loader = steps({
+ *   loadModules,           // Auto-named: "Load modules"
+ *   loadVault: {           // Group: "Load vault"
+ *     discover,            //   "Discover"
+ *     parse,               //   "Parse"
+ *   },
+ * });
+ *
+ * const results = await loader.run({ clear: true });
+ *
+ * // Inside work functions, use step() to report progress:
+ * async function discover() {
+ *   const files = await glob("**\/*.md");
+ *   for (let i = 0; i < files.length; i++) {
+ *     step().progress(i + 1, files.length);
+ *     await process(files[i]);
+ *   }
+ *   return files;
+ * }
+ * ```
+ *
+ * ## Fluent Mode (legacy)
+ *
+ * Chain steps with `.run()` and execute with `.execute()`:
+ *
+ * ```typescript
  * await steps()
  *   .run("Loading modules", () => import("./app"))
  *   .run("Building view", async () => buildView())
  *   .execute();
- *
- * // Async generator with sub-steps
- * await steps()
- *   .run("Loading vault", async function* () {
- *     yield "Discovering files";        // String = new sub-step
- *     const files = await discoverFiles();
- *
- *     yield "Parsing markdown";         // New sub-step
- *     for (const [i, file] of files.entries()) {
- *       yield { current: i + 1, total: files.length };  // Progress update
- *       await parse(file);
- *     }
- *
- *     return vault;
- *   })
- *   .execute({ clear: true });
  * ```
+ *
+ * Generators can yield sub-step progress:
+ * - Yield a **string** to create a new sub-step
+ * - Yield an **object** `{ current, total }` to update progress on current sub-step
  */
 
 import { MultiProgress, type TaskHandle } from "../cli/multi-progress.js";
+import { stepsDeclarative, type StepsRunner } from "./declarative.js";
+import type { StepsDef } from "./step-node.js";
+
+// Re-export step() context helper
+export { step } from "./als-context.js";
+
+// Re-export types from declarative
+export type { StepsRunner } from "./declarative.js";
+export type { StepsDef, StepNode } from "./step-node.js";
+export type { StepContext } from "./als-context.js";
 
 // Node.js globals for yielding to event loop
 declare function setImmediate(callback: (value?: unknown) => void): unknown;
@@ -126,9 +149,21 @@ export interface StepBuilder {
 }
 
 /**
- * Create a sequential step runner
+ * Create a step runner
  *
- * @example
+ * @overload Declarative mode - pass an object to declare steps upfront
+ * @overload Fluent mode - chain steps with .run() and execute with .execute()
+ *
+ * @example Declarative mode (recommended)
+ * ```typescript
+ * const loader = steps({
+ *   loadModules,
+ *   loadVault: { discover, parse },
+ * });
+ * const results = await loader.run({ clear: true });
+ * ```
+ *
+ * @example Fluent mode
  * ```typescript
  * await steps()
  *   .run("Step 1", doStep1)
@@ -136,7 +171,24 @@ export interface StepBuilder {
  *   .execute();
  * ```
  */
-export function steps(): StepBuilder {
+export function steps<T extends StepsDef>(def: T): StepsRunner<T>;
+export function steps(): StepBuilder;
+export function steps<T extends StepsDef>(
+  def?: T,
+): StepsRunner<T> | StepBuilder {
+  // Declarative mode: object passed
+  if (def !== undefined) {
+    return stepsDeclarative(def);
+  }
+
+  // Fluent mode: no arguments
+  return createFluentBuilder();
+}
+
+/**
+ * Create the fluent step builder (legacy mode)
+ */
+function createFluentBuilder(): StepBuilder {
   const stepList: StepDef[] = [];
 
   const builder: StepBuilder = {
@@ -232,7 +284,7 @@ function processYield(
     // String = start a sub-step with this label
     if (state.currentHandle && state.currentLabel) {
       const elapsed = Date.now() - state.subStepStartTime;
-      state.currentHandle.complete(`${state.currentLabel} (${elapsed}ms)`);
+      state.currentHandle.complete(elapsed);
     }
 
     state.currentLabel = value;
@@ -315,12 +367,12 @@ async function runAsyncGenerator<T>(
   // Complete final sub-step
   if (state.currentHandle && state.currentLabel) {
     const elapsed = Date.now() - state.subStepStartTime;
-    state.currentHandle.complete(`${state.currentLabel} (${elapsed}ms)`);
+    state.currentHandle.complete(elapsed);
   }
 
   // Complete parent step
   const totalElapsed = Date.now() - state.startTime;
-  parentHandle.complete(`${parentTitle} (${totalElapsed}ms)`);
+  parentHandle.complete(totalElapsed);
 
   return result.value;
 }
@@ -357,12 +409,12 @@ async function runSyncGenerator<T>(
   // Complete final sub-step
   if (state.currentHandle && state.currentLabel) {
     const elapsed = Date.now() - state.subStepStartTime;
-    state.currentHandle.complete(`${state.currentLabel} (${elapsed}ms)`);
+    state.currentHandle.complete(elapsed);
   }
 
   // Complete parent step
   const totalElapsed = Date.now() - state.startTime;
-  parentHandle.complete(`${parentTitle} (${totalElapsed}ms)`);
+  parentHandle.complete(totalElapsed);
 
   return result.value;
 }

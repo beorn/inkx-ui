@@ -1,25 +1,23 @@
 /**
  * Fluent sequential task builder
  *
- * Run multiple tasks in sequence with progress display.
+ * @deprecated Use `steps()` from `@beorn/inkx-ui/progress` instead.
  *
  * @example
  * ```typescript
+ * // OLD (deprecated):
  * import { tasks } from "@beorn/inkx-ui/progress";
- *
  * const results = await tasks()
- *   .add("Loading modules", () => Promise.all([
- *     import("./moduleA"),
- *     import("./moduleB"),
- *   ]))
- *   .add("Processing data", function* () {
- *     for (let i = 0; i < 100; i++) {
- *       yield { current: i, total: 100 };
- *       processItem(i);
- *     }
- *     return finalResult;
- *   })
+ *   .add("Loading", loadModules)
+ *   .add("Processing", processData)
  *   .run({ clear: true });
+ *
+ * // NEW:
+ * import { steps } from "@beorn/inkx-ui/progress";
+ * const results = await steps({
+ *   loadModules,
+ *   processData,
+ * }).run({ clear: true });
  * ```
  */
 

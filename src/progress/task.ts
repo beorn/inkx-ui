@@ -1,26 +1,17 @@
 /**
  * Fluent single-task wrapper
  *
- * Wraps any async operation with a spinner indicator.
+ * @deprecated Use `steps()` from `@beorn/inkx-ui/progress` instead.
  *
  * @example
  * ```typescript
+ * // OLD (deprecated):
  * import { task } from "@beorn/inkx-ui/progress";
- *
- * // Wrap a promise
  * const data = await task("Loading data").wrap(fetchData());
  *
- * // Wrap a function
- * const result = await task("Processing").wrap(() => processData());
- *
- * // Wrap a generator (shows progress)
- * const state = await task("Building").wrap(function* () {
- *   for (let i = 0; i < 10; i++) {
- *     yield { current: i, total: 10 };
- *     doWork(i);
- *   }
- *   return finalResult;
- * });
+ * // NEW:
+ * import { steps } from "@beorn/inkx-ui/progress";
+ * const results = await steps({ loadData: fetchData }).run();
  * ```
  */
 

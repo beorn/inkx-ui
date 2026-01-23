@@ -1,9 +1,21 @@
 /**
  * withProgress - Wrap callback-based progress functions
  *
- * This is the main wrapper for existing km patterns like:
- * - manager.syncFromFs((info) => ...)
- * - rebuildState((info) => ...)
+ * @deprecated Use `steps()` from `@beorn/inkx-ui/progress` instead.
+ *
+ * @example
+ * ```typescript
+ * // OLD (deprecated):
+ * import { withProgress } from "@beorn/inkx-ui/wrappers";
+ * const result = await withProgress(
+ *   (onProgress) => manager.syncFromFs(onProgress),
+ *   { phases: SYNC_PHASES }
+ * );
+ *
+ * // NEW:
+ * import { steps } from "@beorn/inkx-ui/progress";
+ * const results = await steps({ syncFiles: () => manager.syncFromFs() }).run();
+ * ```
  */
 
 import type {

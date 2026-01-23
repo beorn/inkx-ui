@@ -1,14 +1,48 @@
 /**
  * Progress utilities for CLI applications
  *
- * Fluent APIs for displaying progress during async operations.
+ * Provides declarative and fluent APIs for displaying progress during async operations.
+ *
+ * @example Declarative mode (recommended)
+ * ```typescript
+ * import { steps, step } from "@beorn/inkx-ui/progress";
+ *
+ * const loader = steps({
+ *   loadModules,           // Auto-named: "Load modules"
+ *   loadVault: {           // Group: "Load vault"
+ *     discover,            //   "Discover"
+ *     parse,               //   "Parse"
+ *   },
+ * });
+ *
+ * const results = await loader.run({ clear: true });
+ * ```
+ *
+ * @example Fluent mode (legacy)
+ * ```typescript
+ * await steps()
+ *   .run("Loading", loadModules)
+ *   .run("Building", buildView)
+ *   .execute({ clear: true });
+ * ```
  */
 
-// Modern fluent API (recommended)
-export { steps, type StepBuilder, type ExecuteOptions } from "./steps.js";
+// Modern API (recommended)
+export {
+  steps,
+  step,
+  type StepBuilder,
+  type ExecuteOptions,
+  type StepsRunner,
+  type StepsDef,
+  type StepNode,
+  type StepContext,
+} from "./steps.js";
 
 // Legacy task wrappers (deprecated - use steps() instead)
+/** @deprecated Use steps() instead */
 export { task, type TaskWrapper } from "./task.js";
+/** @deprecated Use steps() instead */
 export { tasks, type TaskBuilder, type RunOptions } from "./tasks.js";
 
 // Re-export CLI progress components
