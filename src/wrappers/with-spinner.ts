@@ -71,18 +71,18 @@ export async function withSpinner<T>(
 }
 
 /**
- * Create a spinner that can be controlled manually
+ * Attach a spinner to a promise for manual control
  * Returns [result, spinner] tuple for custom control
  *
  * @example
  * ```ts
- * const [promise, spinner] = createSpinner(fetchData(), "Loading...");
+ * const [promise, spinner] = attachSpinner(fetchData(), "Loading...");
  * spinner.text = "Still loading...";
  * const result = await promise;
  * spinner.succeed("Loaded!");
  * ```
  */
-export function createSpinner<T>(
+export function attachSpinner<T>(
   promise: Promise<T>,
   text: string,
   options: WithSpinnerOptions = {},

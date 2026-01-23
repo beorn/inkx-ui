@@ -179,7 +179,7 @@ export class Spinner {
 
   private render(): void {
     const frame = SPINNER_FRAMES[this.style][this.frameIndex];
-    const colorFn = (chalk as Record<string, (s: string) => string>)[
+    const colorFn = (chalk as unknown as Record<string, (s: string) => string>)[
       this.color
     ];
     const coloredFrame = colorFn ? colorFn(frame) : frame;

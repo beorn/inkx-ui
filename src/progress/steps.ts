@@ -186,6 +186,18 @@ export function steps<T extends StepsDef>(
 }
 
 /**
+ * Create a no-op StepController for work functions that don't use sub-steps.
+ * This satisfies the type union while being harmless if not used.
+ */
+function createNoopStepController(): StepController {
+  const controller = (_label: string) => {};
+  controller.progress = (_current: number, _total: number) => {};
+  controller.done = () => {};
+  // StepController uses `new` as a callable signature, not a constructor
+  return controller as unknown as StepController;
+}
+
+/**
  * Create the fluent step builder (legacy mode)
  */
 function createFluentBuilder(): StepBuilder {
@@ -216,7 +228,7 @@ function createFluentBuilder(): StepBuilder {
           // Yield to event loop before potentially blocking work
           await new Promise((r) => setImmediate(r));
 
-          const result = step.work();
+          const result = step.work(createNoopStepController());
 
           if (isAsyncGenerator(result)) {
             // Async generator: parent stays static while sub-steps animate

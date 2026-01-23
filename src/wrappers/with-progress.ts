@@ -152,8 +152,10 @@ export async function withProgress<T>(
     if (spinnerTimerId !== null) {
       clearTimeout(spinnerTimerId);
     }
-    if (spinner) {
-      spinner.stop();
+    // Note: spinner may be set by setTimeout callback - TS can't track this
+    const pendingSpinner = spinner as unknown as Spinner | null;
+    if (pendingSpinner) {
+      pendingSpinner.stop();
     }
 
     // Stop and show cursor
@@ -170,8 +172,10 @@ export async function withProgress<T>(
     if (spinnerTimerId !== null) {
       clearTimeout(spinnerTimerId);
     }
-    if (spinner) {
-      spinner.stop();
+    // Note: spinner may be set by setTimeout callback - TS can't track this
+    const errorSpinner = spinner as unknown as Spinner | null;
+    if (errorSpinner) {
+      errorSpinner.stop();
     }
 
     // Restore cursor on error

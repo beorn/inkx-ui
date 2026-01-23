@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from "bun:test";
-import { withSpinner, createSpinner } from "../src/wrappers/with-spinner.js";
+import { withSpinner, attachSpinner } from "../src/wrappers/with-spinner.js";
 import {
   withProgress,
   createProgressCallback,
@@ -37,9 +37,9 @@ describe("withSpinner", () => {
   });
 });
 
-describe("createSpinner", () => {
+describe("attachSpinner", () => {
   it("returns promise and spinner", async () => {
-    const [promise, spinner] = createSpinner(
+    const [promise, spinner] = attachSpinner(
       Promise.resolve("result"),
       "Loading",
     );
