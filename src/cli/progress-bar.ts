@@ -13,6 +13,12 @@ import {
   isTTY,
   getTerminalWidth,
 } from "./ansi.js";
+import {
+  calculateETA,
+  formatETA,
+  DEFAULT_ETA_BUFFER_SIZE,
+  type ETASample,
+} from "../utils/eta.js";
 
 /** Default format string */
 const DEFAULT_FORMAT = ":bar :percent | :current/:total | ETA: :eta";
@@ -47,8 +53,7 @@ export class ProgressBar {
   private isActive = false;
 
   // ETA smoothing - track last N update times
-  private readonly etaBufferSize = 10;
-  private etaBuffer: { time: number; value: number }[] = [];
+  private etaBuffer: ETASample[] = [];
 
   constructor(options: ProgressBarOptions = {}) {
     this.total = options.total ?? 100;
@@ -91,7 +96,7 @@ export class ProgressBar {
     // Update ETA buffer
     const now = Date.now();
     this.etaBuffer.push({ time: now, value: this.current });
-    if (this.etaBuffer.length > this.etaBufferSize) {
+    if (this.etaBuffer.length > DEFAULT_ETA_BUFFER_SIZE) {
       this.etaBuffer.shift();
     }
 
@@ -157,52 +162,9 @@ export class ProgressBar {
     return this;
   }
 
-  /**
-   * Calculate ETA in seconds using smoothed rate
-   */
-  private calculateETA(): number | null {
-    if (this.etaBuffer.length < 2) {
-      return null;
-    }
-
-    const first = this.etaBuffer[0];
-    const last = this.etaBuffer[this.etaBuffer.length - 1];
-
-    const elapsed = (last.time - first.time) / 1000; // seconds
-    const progress = last.value - first.value;
-
-    if (elapsed <= 0 || progress <= 0) {
-      return null;
-    }
-
-    const rate = progress / elapsed; // items per second
-    const remaining = this.total - this.current;
-
-    return remaining / rate;
-  }
-
-  /**
-   * Format ETA for display
-   */
-  private formatETA(eta: number | null): string {
-    if (eta === null || !isFinite(eta)) {
-      return "--:--";
-    }
-
-    if (eta > 86400) {
-      // > 24 hours
-      return ">1d";
-    }
-
-    const hours = Math.floor(eta / 3600);
-    const minutes = Math.floor((eta % 3600) / 60);
-    const seconds = Math.floor(eta % 60);
-
-    if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-    }
-
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  /** Get ETA in seconds using smoothed rate */
+  private getETASeconds(): number | null {
+    return calculateETA(this.etaBuffer, this.current, this.total);
   }
 
   /**
@@ -210,7 +172,7 @@ export class ProgressBar {
    */
   private render(tokens?: Record<string, string | number>): void {
     const percent = this.total > 0 ? this.current / this.total : 0;
-    const eta = this.calculateETA();
+    const eta = this.getETASeconds();
 
     // Build the bar
     const completeLength = Math.round(this.width * percent);
@@ -234,8 +196,8 @@ export class ProgressBar {
       .replace(":percent", `${Math.round(percent * 100)}%`.padStart(4))
       .replace(":current", String(this.current))
       .replace(":total", String(this.total))
-      .replace(":eta", this.formatETA(eta))
-      .replace(":elapsed", this.formatETA(elapsed))
+      .replace(":eta", formatETA(eta))
+      .replace(":elapsed", formatETA(elapsed))
       .replace(":rate", rate.toFixed(1))
       .replace(":phase", chalk.dim(phaseDisplay));
 

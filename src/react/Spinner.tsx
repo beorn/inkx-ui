@@ -4,16 +4,7 @@
 
 import React, { useState, useEffect } from "react";
 import type { SpinnerProps, SpinnerStyle } from "../types.js";
-import { SPINNER_FRAMES } from "../cli/spinner.js";
-
-/** Default intervals for each style (ms) */
-const SPINNER_INTERVALS: Record<SpinnerStyle, number> = {
-  dots: 80,
-  line: 120,
-  arc: 100,
-  bounce: 120,
-  pulse: 100,
-};
+import { SPINNER_FRAMES, SPINNER_INTERVALS } from "../cli/spinner.js";
 
 /**
  * Animated spinner component for React TUI apps

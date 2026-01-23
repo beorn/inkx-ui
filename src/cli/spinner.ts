@@ -23,7 +23,7 @@ export const SPINNER_FRAMES: Record<SpinnerStyle, string[]> = {
 };
 
 /** Default intervals for each style (ms) */
-const SPINNER_INTERVALS: Record<SpinnerStyle, number> = {
+export const SPINNER_INTERVALS: Record<SpinnerStyle, number> = {
   dots: 80,
   line: 120,
   arc: 100,

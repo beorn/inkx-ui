@@ -68,12 +68,6 @@ export async function wrapGenerator<T>(
       } else {
         bar.update(current);
       }
-
-      // If using custom format function, update via direct write
-      if (isCustomFormat && isTty) {
-        const text = textOrFormat({ current, total });
-        // The bar will handle the display, but we could override here if needed
-      }
     }
 
     // Stop bar
