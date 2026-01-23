@@ -6,15 +6,14 @@
  * - rebuildState((info) => ...)
  */
 
-import type { ProgressInfo, ProgressCallback, WithProgressOptions } from "../types.js";
+import type {
+  ProgressInfo,
+  ProgressCallback,
+  WithProgressOptions,
+} from "../types.js";
 import { ProgressBar } from "../cli/progress-bar.js";
 import { Spinner } from "../cli/spinner.js";
-import {
-  CURSOR_HIDE,
-  CURSOR_SHOW,
-  write,
-  isTTY,
-} from "../cli/ansi.js";
+import { CURSOR_HIDE, CURSOR_SHOW, write, isTTY } from "../cli/ansi.js";
 
 // Declare timer globals (not exposed by bun-types)
 declare function setTimeout(callback: () => void, ms: number): unknown;
@@ -64,11 +63,11 @@ export async function withProgress<T>(
   const isTty = isTTY(stream);
 
   // Determine format
-  const format = options.format ?? (
-    options.phases
+  const format =
+    options.format ??
+    (options.phases
       ? ":phase [:bar] :current/:total"
-      : "[:bar] :current/:total :percent"
-  );
+      : "[:bar] :current/:total :percent");
 
   const bar = new ProgressBar({
     format,
@@ -194,11 +193,11 @@ export function createProgressCallback(
   const stream = process.stdout;
   const isTty = isTTY(stream);
 
-  const format = options.format ?? (
-    options.phases
+  const format =
+    options.format ??
+    (options.phases
       ? ":phase [:bar] :current/:total"
-      : "[:bar] :current/:total :percent"
-  );
+      : "[:bar] :current/:total :percent");
 
   const bar = new ProgressBar({
     format,
