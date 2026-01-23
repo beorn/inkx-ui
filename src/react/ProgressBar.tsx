@@ -15,7 +15,7 @@ import {
  *
  * @example
  * ```tsx
- * import { ProgressBar } from "@beorn/progressx/react";
+ * import { ProgressBar } from "@beorn/inkx-ui/react";
  *
  * function DownloadProgress({ current, total }) {
  *   return (

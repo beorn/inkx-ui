@@ -29,6 +29,10 @@
     "./utils": {
       "import": "./src/utils/index.ts",
       "types": "./src/utils/index.ts"
+    },
+    "./progress": {
+      "import": "./src/progress/index.ts",
+      "types": "./src/progress/index.ts"
     }
   },
   "files": [

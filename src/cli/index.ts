@@ -3,7 +3,7 @@
  *
  * @example
  * ```ts
- * import { Spinner, ProgressBar, MultiProgress } from "@beorn/progressx/cli";
+ * import { Spinner, ProgressBar, MultiProgress } from "@beorn/inkx-ui/cli";
  *
  * // Quick spinner
  * const stop = Spinner.start("Loading...");

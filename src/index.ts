@@ -1,21 +1,25 @@
 /**
- * progressx - Ergonomic progress indicators for Node.js CLI and React TUI apps
+ * inkx-ui - UI components for Ink/inkx TUI apps
+ *
+ * Progress indicators, spinners, and task wrappers for CLI applications.
  *
  * @example
  * ```ts
- * // CLI usage
- * import { Spinner, ProgressBar } from "@beorn/progressx/cli";
- * import { withSpinner, withProgress } from "@beorn/progressx/wrappers";
+ * // Fluent task API (recommended)
+ * import { task, tasks } from "@beorn/inkx-ui/progress";
  *
- * // Quick spinner
- * const data = await withSpinner(fetchData(), "Loading...");
+ * const data = await task("Loading").wrap(fetchData());
  *
- * // Wrap callback-based APIs
- * await withProgress((p) => syncFromFs(p), { phases: { ... } });
+ * const results = await tasks()
+ *   .add("Loading", () => fetchData())
+ *   .add("Processing", () => process())
+ *   .run({ clear: true });
  *
- * // React/TUI usage
- * import { Spinner, ProgressBar } from "@beorn/progressx/react";
- * <Spinner label="Loading..." />
+ * // Low-level CLI components
+ * import { Spinner, ProgressBar } from "@beorn/inkx-ui/cli";
+ *
+ * // React/TUI components
+ * import { Spinner, ProgressBar } from "@beorn/inkx-ui/react";
  * ```
  *
  * @packageDocumentation
@@ -26,5 +30,5 @@ export * from "./types.js";
 export * from "./cli/index.js";
 export * from "./wrappers/index.js";
 
-// Note: React components should be imported from "@beorn/progressx/react"
+// Note: React components should be imported from "@beorn/inkx-ui/react"
 // to avoid requiring React as a dependency for CLI-only usage

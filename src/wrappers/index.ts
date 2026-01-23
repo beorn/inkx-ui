@@ -8,7 +8,7 @@
  *   withProgress,
  *   wrapGenerator,
  *   wrapEmitter
- * } from "@beorn/progressx/wrappers";
+ * } from "@beorn/inkx-ui/wrappers";
  *
  * // Wrap any promise
  * const data = await withSpinner(fetchData(), "Loading...");

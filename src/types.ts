@@ -1,5 +1,5 @@
 /**
- * Core types for progressx
+ * Core types for inkx-ui progress components
  */
 
 /** Progress info passed to callbacks (matches km pattern) */
