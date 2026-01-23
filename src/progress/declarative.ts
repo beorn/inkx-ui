@@ -336,6 +336,10 @@ async function runGenerator<T>(
 ): Promise<T> {
   const startTime = Date.now();
   let result = gen.next();
+  let hasSubSteps = false;
+  // Track last inserted handle to maintain correct order
+  // Each new sub-step inserts after the previous one, not after parent
+  let lastInsertedId = ctx.handle.id;
 
   while (!result.done) {
     const value = result.value;
@@ -344,11 +348,19 @@ async function runGenerator<T>(
     if (typeof value === "string") {
       // String = new sub-step
       ctx._completeSubStep();
+
+      // First sub-step: change parent from spinner to group (no animation)
+      if (!hasSubSteps) {
+        hasSubSteps = true;
+        ctx.handle.setType("group");
+      }
+
       const subHandle = multi.add(value, {
         type: "spinner",
         indent: node.indent + 1,
-        insertAfter: ctx.handle.id,
+        insertAfter: lastInsertedId,
       });
+      lastInsertedId = subHandle.id; // Next sub-step inserts after this one
       ctx._addSubHandle(value, subHandle);
       subHandle.start();
     } else if (isProgressUpdate(value)) {
@@ -383,6 +395,10 @@ async function runAsyncGenerator<T>(
 ): Promise<T> {
   const startTime = Date.now();
   let result = await gen.next();
+  let hasSubSteps = false;
+  // Track last inserted handle to maintain correct order
+  // Each new sub-step inserts after the previous one, not after parent
+  let lastInsertedId = ctx.handle.id;
 
   while (!result.done) {
     const value = result.value;
@@ -391,11 +407,19 @@ async function runAsyncGenerator<T>(
     if (typeof value === "string") {
       // String = new sub-step
       ctx._completeSubStep();
+
+      // First sub-step: change parent from spinner to group (no animation)
+      if (!hasSubSteps) {
+        hasSubSteps = true;
+        ctx.handle.setType("group");
+      }
+
       const subHandle = multi.add(value, {
         type: "spinner",
         indent: node.indent + 1,
-        insertAfter: ctx.handle.id,
+        insertAfter: lastInsertedId,
       });
+      lastInsertedId = subHandle.id; // Next sub-step inserts after this one
       ctx._addSubHandle(value, subHandle);
       subHandle.start();
     } else if (isProgressUpdate(value)) {

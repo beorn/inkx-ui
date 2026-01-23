@@ -324,6 +324,12 @@ class TaskHandle {
     return this;
   }
 
+  /** Change task type (e.g., from spinner to group when sub-steps are added) */
+  setType(type: "spinner" | "bar" | "group"): this {
+    this.multi._updateTask(this._id, { type });
+    return this;
+  }
+
   /** Get current status */
   get status(): TaskStatus {
     return this.multi._getTask(this._id)?.status ?? "pending";
