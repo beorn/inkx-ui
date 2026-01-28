@@ -198,7 +198,9 @@ export class MultiProgress {
     const task = this.tasks.get(id);
     if (task) {
       Object.assign(task, updates);
-      if (this.isActive) {
+      // Only render immediately for status changes (complete/fail/etc.)
+      // Progress updates (current/total) are debounced by the 80ms animation timer
+      if (this.isActive && updates.status) {
         this.render();
       }
     }

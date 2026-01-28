@@ -2,8 +2,25 @@
  * Tests for Spinner class
  */
 
-import { describe, it, expect, beforeEach, afterEach, mock } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { Spinner, SPINNER_FRAMES } from "../src/cli/spinner.js";
+
+// Capture stdout at top level to cover all spinner tests
+let originalWrite: typeof process.stdout.write;
+let output: string[];
+
+beforeEach(() => {
+  output = [];
+  originalWrite = process.stdout.write.bind(process.stdout);
+  process.stdout.write = ((chunk: any) => {
+    output.push(String(chunk));
+    return true;
+  }) as typeof process.stdout.write;
+});
+
+afterEach(() => {
+  process.stdout.write = originalWrite;
+});
 
 describe("Spinner", () => {
   describe("SPINNER_FRAMES", () => {
@@ -70,13 +87,16 @@ describe("Spinner", () => {
       spinner.start();
       spinner.succeed("Done");
       expect(spinner.spinning).toBe(false);
+      expect(output.join("")).toContain("Done");
     });
 
     it("fail stops spinner", () => {
+      output = []; // Reset for this specific test
       const spinner = new Spinner("Loading");
       spinner.start();
       spinner.fail("Error");
       expect(spinner.spinning).toBe(false);
+      expect(output.join("")).toContain("Error");
     });
 
     it("methods are chainable", () => {

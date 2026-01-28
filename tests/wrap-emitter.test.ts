@@ -2,15 +2,37 @@
  * Tests for wrapEmitter and waitForEvent
  */
 
-import { describe, it, expect, beforeEach, mock } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { EventEmitter } from "events";
 import { wrapEmitter, waitForEvent } from "../src/wrappers/wrap-emitter.js";
 
+// Helper to capture stdout output in tests
+function captureStdout() {
+  const output: string[] = [];
+  const original = process.stdout.write.bind(process.stdout);
+  process.stdout.write = ((chunk: any) => {
+    output.push(String(chunk));
+    return true;
+  }) as typeof process.stdout.write;
+  return {
+    output,
+    restore: () => {
+      process.stdout.write = original;
+    },
+  };
+}
+
 describe("wrapEmitter", () => {
   let emitter: EventEmitter;
+  let capture: ReturnType<typeof captureStdout>;
 
   beforeEach(() => {
     emitter = new EventEmitter();
+    capture = captureStdout();
+  });
+
+  afterEach(() => {
+    capture.restore();
   });
 
   it("returns a stop function", () => {
@@ -173,9 +195,15 @@ describe("wrapEmitter", () => {
 
 describe("waitForEvent", () => {
   let emitter: EventEmitter;
+  let capture: ReturnType<typeof captureStdout>;
 
   beforeEach(() => {
     emitter = new EventEmitter();
+    capture = captureStdout();
+  });
+
+  afterEach(() => {
+    capture.restore();
   });
 
   it("resolves when event is emitted", async () => {

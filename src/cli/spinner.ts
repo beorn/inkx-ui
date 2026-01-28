@@ -197,6 +197,13 @@ export class Spinner {
   }
 
   /**
+   * Dispose the spinner (calls stop)
+   */
+  [Symbol.dispose](): void {
+    this.stop();
+  }
+
+  /**
    * Static helper to quickly start a spinner
    * Returns a stop function
    *

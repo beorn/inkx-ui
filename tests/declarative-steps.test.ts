@@ -2,9 +2,21 @@
  * Tests for declarative steps() API
  */
 
-import { describe, it, expect, mock } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { steps, step, type StepContext } from "../src/progress/steps.js";
 import { generateLabel, parseStepsDef } from "../src/progress/step-node.js";
+
+// Capture stdout to silence spinner output
+let originalWrite: typeof process.stdout.write;
+
+beforeEach(() => {
+  originalWrite = process.stdout.write.bind(process.stdout);
+  process.stdout.write = (() => true) as typeof process.stdout.write;
+});
+
+afterEach(() => {
+  process.stdout.write = originalWrite;
+});
 
 describe("generateLabel", () => {
   it("converts camelCase to Title case", () => {

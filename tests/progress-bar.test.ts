@@ -2,8 +2,20 @@
  * Tests for ProgressBar class
  */
 
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { ProgressBar } from "../src/cli/progress-bar.js";
+
+// Capture stdout to silence progress bar output
+let originalWrite: typeof process.stdout.write;
+
+beforeEach(() => {
+  originalWrite = process.stdout.write.bind(process.stdout);
+  process.stdout.write = (() => true) as typeof process.stdout.write;
+});
+
+afterEach(() => {
+  process.stdout.write = originalWrite;
+});
 
 describe("ProgressBar", () => {
   describe("constructor", () => {

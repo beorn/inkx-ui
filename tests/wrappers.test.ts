@@ -2,7 +2,7 @@
  * Tests for wrapper utilities
  */
 
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { withSpinner, attachSpinner } from "../src/wrappers/with-spinner.js";
 import {
   withProgress,
@@ -10,6 +10,18 @@ import {
 } from "../src/wrappers/with-progress.js";
 import { wrapGenerator } from "../src/wrappers/wrap-generator.js";
 import type { ProgressCallback } from "../src/types.js";
+
+// Capture stdout at top level to cover all progress/spinner tests
+let originalWrite: typeof process.stdout.write;
+
+beforeEach(() => {
+  originalWrite = process.stdout.write.bind(process.stdout);
+  process.stdout.write = (() => true) as typeof process.stdout.write;
+});
+
+afterEach(() => {
+  process.stdout.write = originalWrite;
+});
 
 describe("withSpinner", () => {
   it("resolves with the promise result", async () => {
