@@ -2,7 +2,7 @@
  * Tests for Table component
  */
 
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import { createElement } from "react";
 import { Table } from "../src/display/Table.js";
 import type { TableColumn } from "../src/types.js";

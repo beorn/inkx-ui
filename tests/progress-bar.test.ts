@@ -2,7 +2,7 @@
  * Tests for ProgressBar class
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { ProgressBar } from "../src/cli/progress-bar.js";
 
 // Capture stdout to silence progress bar output

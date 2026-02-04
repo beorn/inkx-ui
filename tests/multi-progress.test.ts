@@ -2,7 +2,7 @@
  * Tests for MultiProgress class
  */
 
-import { describe, it, expect, beforeEach, afterEach, mock } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, mock } from "vitest";
 import { MultiProgress } from "../src/cli/multi-progress.js";
 import { PassThrough } from "stream";
 

@@ -2,7 +2,7 @@
  * Tests for wrapper utilities
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { withSpinner, attachSpinner } from "../src/wrappers/with-spinner.js";
 import {
   withProgress,

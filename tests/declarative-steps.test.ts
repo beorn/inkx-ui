@@ -2,7 +2,7 @@
  * Tests for declarative steps() API
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { steps, step, type StepContext } from "../src/progress/steps.js";
 import { generateLabel, parseStepsDef } from "../src/progress/step-node.js";
 

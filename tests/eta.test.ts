@@ -2,7 +2,7 @@
  * Tests for ETA calculation utilities
  */
 
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import {
   calculateETA,
   formatETA,

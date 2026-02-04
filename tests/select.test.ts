@@ -2,7 +2,7 @@
  * Tests for Select component and withSelect wrapper
  */
 
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import { createElement } from "react";
 import { Select, useSelect } from "../src/input/Select.js";
 import { withSelect, createSelect } from "../src/wrappers/with-select.js";

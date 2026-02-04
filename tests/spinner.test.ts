@@ -2,7 +2,7 @@
  * Tests for Spinner class
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { Spinner, SPINNER_FRAMES } from "../src/cli/spinner.js";
 
 // Capture stdout at top level to cover all spinner tests

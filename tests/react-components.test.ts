@@ -2,7 +2,7 @@
  * Tests for React components and hooks
  */
 
-import { describe, it, expect, beforeEach, afterEach, mock } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, mock } from "vitest";
 import React, { createElement } from "react";
 import { Spinner, useSpinnerFrame } from "../src/react/Spinner.js";
 import { ProgressBar, useProgressBar } from "../src/react/ProgressBar.js";

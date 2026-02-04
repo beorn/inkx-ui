@@ -2,7 +2,7 @@
  * Tests for TextInput React component and CLI wrapper
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import React, { createElement } from "react";
 import { TextInput, useTextInput } from "../src/input/TextInput.js";
 import { createTextInput } from "../src/wrappers/with-text-input.js";

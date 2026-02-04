@@ -2,7 +2,7 @@
  * Tests for wrapEmitter and waitForEvent
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { EventEmitter } from "events";
 import { wrapEmitter, waitForEvent } from "../src/wrappers/wrap-emitter.js";
 
