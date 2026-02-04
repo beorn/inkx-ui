@@ -9,5 +9,5 @@
  * ```
  */
 
-export { Table } from "./Table.js";
-export type { TableColumn, TableProps } from "../types.js";
+export { Table } from "./Table.js"
+export type { TableColumn, TableProps } from "../types.js"

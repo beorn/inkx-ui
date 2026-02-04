@@ -63,17 +63,17 @@ bun test --coverage
 Example test structure:
 
 ```ts
-import { describe, it, expect } from "bun:test";
-import { Spinner } from "../src/cli/spinner.js";
+import { describe, it, expect } from "bun:test"
+import { Spinner } from "../src/cli/spinner.js"
 
 describe("Spinner", () => {
   describe("constructor", () => {
     it("accepts string as text", () => {
-      const spinner = new Spinner("Loading");
-      expect(spinner.currentText).toBe("Loading");
-    });
-  });
-});
+      const spinner = new Spinner("Loading")
+      expect(spinner.currentText).toBe("Loading")
+    })
+  })
+})
 ```
 
 ## Code Style

@@ -2,8 +2,8 @@
  * CLI ProgressBar - Determinate progress indicator with ETA
  */
 
-import chalk from "chalk";
-import type { ProgressBarOptions } from "../types.js";
+import chalk from "chalk"
+import type { ProgressBarOptions } from "../types.js"
 import {
   CURSOR_HIDE,
   CURSOR_SHOW,
@@ -12,16 +12,16 @@ import {
   write,
   isTTY,
   getTerminalWidth,
-} from "./ansi.js";
+} from "./ansi.js"
 import {
   calculateETA,
   formatETA,
   DEFAULT_ETA_BUFFER_SIZE,
   type ETASample,
-} from "../utils/eta.js";
+} from "../utils/eta.js"
 
 /** Default format string */
-const DEFAULT_FORMAT = ":bar :percent | :current/:total | ETA: :eta";
+const DEFAULT_FORMAT = ":bar :percent | :current/:total | ETA: :eta"
 
 /**
  * ProgressBar class for CLI progress indication
@@ -38,32 +38,32 @@ const DEFAULT_FORMAT = ":bar :percent | :current/:total | ETA: :eta";
  * ```
  */
 export class ProgressBar {
-  private total: number;
-  private format: string;
-  private width: number;
-  private complete: string;
-  private incomplete: string;
-  private stream: NodeJS.WriteStream;
-  private hideCursor: boolean;
-  private phases: Record<string, string>;
+  private total: number
+  private format: string
+  private width: number
+  private complete: string
+  private incomplete: string
+  private stream: NodeJS.WriteStream
+  private hideCursor: boolean
+  private phases: Record<string, string>
 
-  private current = 0;
-  private phase: string | null = null;
-  private startTime: number | null = null;
-  private isActive = false;
+  private current = 0
+  private phase: string | null = null
+  private startTime: number | null = null
+  private isActive = false
 
   // ETA smoothing - track last N update times
-  private etaBuffer: ETASample[] = [];
+  private etaBuffer: ETASample[] = []
 
   constructor(options: ProgressBarOptions = {}) {
-    this.total = options.total ?? 100;
-    this.format = options.format ?? DEFAULT_FORMAT;
-    this.width = options.width ?? 40;
-    this.complete = options.complete ?? "█";
-    this.incomplete = options.incomplete ?? "░";
-    this.stream = options.stream ?? process.stdout;
-    this.hideCursor = options.hideCursor ?? true;
-    this.phases = options.phases ?? {};
+    this.total = options.total ?? 100
+    this.format = options.format ?? DEFAULT_FORMAT
+    this.width = options.width ?? 40
+    this.complete = options.complete ?? "█"
+    this.incomplete = options.incomplete ?? "░"
+    this.stream = options.stream ?? process.stdout
+    this.hideCursor = options.hideCursor ?? true
+    this.phases = options.phases ?? {}
   }
 
   /**
@@ -71,47 +71,47 @@ export class ProgressBar {
    */
   start(initialValue = 0, initialTotal?: number): this {
     if (initialTotal !== undefined) {
-      this.total = initialTotal;
+      this.total = initialTotal
     }
 
-    this.current = initialValue;
-    this.startTime = Date.now();
-    this.isActive = true;
-    this.etaBuffer = [{ time: this.startTime, value: initialValue }];
+    this.current = initialValue
+    this.startTime = Date.now()
+    this.isActive = true
+    this.etaBuffer = [{ time: this.startTime, value: initialValue }]
 
     if (this.hideCursor && isTTY(this.stream)) {
-      write(CURSOR_HIDE, this.stream);
+      write(CURSOR_HIDE, this.stream)
     }
 
-    this.render();
-    return this;
+    this.render()
+    return this
   }
 
   /**
    * Update progress value
    */
   update(value: number, tokens?: Record<string, string | number>): this {
-    this.current = Math.min(value, this.total);
+    this.current = Math.min(value, this.total)
 
     // Update ETA buffer
-    const now = Date.now();
-    this.etaBuffer.push({ time: now, value: this.current });
+    const now = Date.now()
+    this.etaBuffer.push({ time: now, value: this.current })
     if (this.etaBuffer.length > DEFAULT_ETA_BUFFER_SIZE) {
-      this.etaBuffer.shift();
+      this.etaBuffer.shift()
     }
 
     if (this.isActive) {
-      this.render(tokens);
+      this.render(tokens)
     }
 
-    return this;
+    return this
   }
 
   /**
    * Increment progress by amount (default: 1)
    */
   increment(amount = 1, tokens?: Record<string, string | number>): this {
-    return this.update(this.current + amount, tokens);
+    return this.update(this.current + amount, tokens)
   }
 
   /**
@@ -121,22 +121,22 @@ export class ProgressBar {
     phaseName: string,
     options?: { current?: number; total?: number },
   ): this {
-    this.phase = phaseName;
+    this.phase = phaseName
 
     if (options?.total !== undefined) {
-      this.total = options.total;
+      this.total = options.total
     }
     if (options?.current !== undefined) {
-      this.current = options.current;
+      this.current = options.current
       // Reset ETA buffer on phase change
-      this.etaBuffer = [{ time: Date.now(), value: this.current }];
+      this.etaBuffer = [{ time: Date.now(), value: this.current }]
     }
 
     if (this.isActive) {
-      this.render();
+      this.render()
     }
 
-    return this;
+    return this
   }
 
   /**
@@ -144,51 +144,51 @@ export class ProgressBar {
    */
   stop(clear = false): this {
     if (!this.isActive) {
-      return this;
+      return this
     }
 
-    this.isActive = false;
+    this.isActive = false
 
     if (clear && isTTY(this.stream)) {
-      write(`${CURSOR_TO_START}${CLEAR_LINE_END}`, this.stream);
+      write(`${CURSOR_TO_START}${CLEAR_LINE_END}`, this.stream)
     } else {
-      write("\n", this.stream);
+      write("\n", this.stream)
     }
 
     if (this.hideCursor && isTTY(this.stream)) {
-      write(CURSOR_SHOW, this.stream);
+      write(CURSOR_SHOW, this.stream)
     }
 
-    return this;
+    return this
   }
 
   /** Get ETA in seconds using smoothed rate */
   private getETASeconds(): number | null {
-    return calculateETA(this.etaBuffer, this.current, this.total);
+    return calculateETA(this.etaBuffer, this.current, this.total)
   }
 
   /**
    * Render the progress bar
    */
   private render(tokens?: Record<string, string | number>): void {
-    const percent = this.total > 0 ? this.current / this.total : 0;
-    const eta = this.getETASeconds();
+    const percent = this.total > 0 ? this.current / this.total : 0
+    const eta = this.getETASeconds()
 
     // Build the bar
-    const completeLength = Math.round(this.width * percent);
-    const incompleteLength = this.width - completeLength;
+    const completeLength = Math.round(this.width * percent)
+    const incompleteLength = this.width - completeLength
     const bar =
       this.complete.repeat(completeLength) +
-      this.incomplete.repeat(incompleteLength);
+      this.incomplete.repeat(incompleteLength)
 
     // Get phase display name
     const phaseDisplay = this.phase
       ? (this.phases[this.phase] ?? this.phase)
-      : "";
+      : ""
 
     // Calculate rate
-    const elapsed = this.startTime ? (Date.now() - this.startTime) / 1000 : 0;
-    const rate = elapsed > 0 ? this.current / elapsed : 0;
+    const elapsed = this.startTime ? (Date.now() - this.startTime) / 1000 : 0
+    const rate = elapsed > 0 ? this.current / elapsed : 0
 
     // Replace tokens in format string
     let output = this.format
@@ -199,23 +199,23 @@ export class ProgressBar {
       .replace(":eta", formatETA(eta))
       .replace(":elapsed", formatETA(elapsed))
       .replace(":rate", rate.toFixed(1))
-      .replace(":phase", chalk.dim(phaseDisplay));
+      .replace(":phase", chalk.dim(phaseDisplay))
 
     // Replace custom tokens
     if (tokens) {
       for (const [key, value] of Object.entries(tokens)) {
-        output = output.replace(`:${key}`, String(value));
+        output = output.replace(`:${key}`, String(value))
       }
     }
 
     // Truncate to terminal width
-    const termWidth = getTerminalWidth(this.stream);
+    const termWidth = getTerminalWidth(this.stream)
     if (output.length > termWidth) {
-      output = output.slice(0, termWidth - 1);
+      output = output.slice(0, termWidth - 1)
     }
 
     if (isTTY(this.stream)) {
-      write(`${CURSOR_TO_START}${output}${CLEAR_LINE_END}`, this.stream);
+      write(`${CURSOR_TO_START}${output}${CLEAR_LINE_END}`, this.stream)
     }
   }
 
@@ -223,20 +223,20 @@ export class ProgressBar {
    * Get current progress ratio (0-1)
    */
   get ratio(): number {
-    return this.total > 0 ? this.current / this.total : 0;
+    return this.total > 0 ? this.current / this.total : 0
   }
 
   /**
    * Get current progress percentage (0-100)
    */
   get percentage(): number {
-    return Math.round(this.ratio * 100);
+    return Math.round(this.ratio * 100)
   }
 
   /**
    * Dispose the progress bar (calls stop)
    */
   [Symbol.dispose](): void {
-    this.stop();
+    this.stop()
   }
 }

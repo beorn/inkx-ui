@@ -21,15 +21,15 @@
  * ```
  */
 
-import type { ProgressInfo } from "../types.js";
-import { MultiProgress, type TaskHandle } from "../cli/multi-progress.js";
+import type { ProgressInfo } from "../types.js"
+import { MultiProgress, type TaskHandle } from "../cli/multi-progress.js"
 
 // Node.js globals for yielding to event loop
-declare function setImmediate(callback: (value?: unknown) => void): unknown;
+declare function setImmediate(callback: (value?: unknown) => void): unknown
 declare function setTimeout(
   callback: (value?: unknown) => void,
   ms: number,
-): unknown;
+): unknown
 
 /** Phase labels for common operations */
 const PHASE_LABELS: Record<string, string> = {
@@ -47,18 +47,18 @@ const PHASE_LABELS: Record<string, string> = {
   rules: "Evaluating rules",
   scanning: "Scanning files",
   reconciling: "Reconciling changes",
-};
+}
 
 /** Task definition */
 interface TaskDef<T = unknown> {
-  title: string;
-  work: () => T | PromiseLike<T> | Generator<ProgressInfo, T, unknown>;
+  title: string
+  work: () => T | PromiseLike<T> | Generator<ProgressInfo, T, unknown>
 }
 
 /** Options for run() */
 export interface RunOptions {
   /** Clear progress display after completion (default: false) */
-  clear?: boolean;
+  clear?: boolean
 }
 
 export interface TaskBuilder {
@@ -70,14 +70,14 @@ export interface TaskBuilder {
   add<T>(
     title: string,
     work: () => T | PromiseLike<T> | Generator<ProgressInfo, T, unknown>,
-  ): TaskBuilder;
+  ): TaskBuilder
 
   /**
    * Run all tasks in sequence
    * @param options - Run options
    * @returns Results keyed by task title
    */
-  run(options?: RunOptions): Promise<Record<string, unknown>>;
+  run(options?: RunOptions): Promise<Record<string, unknown>>
 }
 
 /**
@@ -86,37 +86,37 @@ export interface TaskBuilder {
  * @returns TaskBuilder with add() and run() methods
  */
 export function tasks(): TaskBuilder {
-  const taskList: TaskDef[] = [];
+  const taskList: TaskDef[] = []
 
   const builder: TaskBuilder = {
     add<T>(
       title: string,
       work: () => T | PromiseLike<T> | Generator<ProgressInfo, T, unknown>,
     ): TaskBuilder {
-      taskList.push({ title, work });
-      return builder;
+      taskList.push({ title, work })
+      return builder
     },
 
     async run(options?: RunOptions): Promise<Record<string, unknown>> {
-      const multi = new MultiProgress();
-      const handles = new Map<string, TaskHandle>();
-      const results: Record<string, unknown> = {};
+      const multi = new MultiProgress()
+      const handles = new Map<string, TaskHandle>()
+      const results: Record<string, unknown> = {}
 
       // Register all tasks upfront (shows pending state)
       for (const task of taskList) {
-        handles.set(task.title, multi.add(task.title, { type: "spinner" }));
+        handles.set(task.title, multi.add(task.title, { type: "spinner" }))
       }
 
-      multi.start();
+      multi.start()
 
       try {
         for (const task of taskList) {
-          const handle = handles.get(task.title)!;
+          const handle = handles.get(task.title)!
 
           // Force render before potentially blocking operation
-          await new Promise((r) => setImmediate(r));
+          await new Promise((r) => setImmediate(r))
 
-          const result = task.work();
+          const result = task.work()
 
           if (isGenerator(result)) {
             // Generator: parent stays static, phases animate underneath
@@ -125,26 +125,26 @@ export function tasks(): TaskBuilder {
               handle,
               task.title,
               multi,
-            );
+            )
           } else if (isPromiseLike(result)) {
-            handle.start();
-            results[task.title] = await result;
-            handle.complete();
+            handle.start()
+            results[task.title] = await result
+            handle.complete()
           } else {
-            handle.start();
-            results[task.title] = result;
-            handle.complete();
+            handle.start()
+            results[task.title] = result
+            handle.complete()
           }
         }
       } finally {
-        multi.stop(options?.clear ?? false);
+        multi.stop(options?.clear ?? false)
       }
 
-      return results;
+      return results
     },
-  };
+  }
 
-  return builder;
+  return builder
 }
 
 /**
@@ -157,65 +157,65 @@ async function runGenerator<T>(
   baseTitle: string,
   multi: MultiProgress,
 ): Promise<T> {
-  let result = gen.next();
-  let currentPhase: string | undefined;
-  let currentPhaseHandle: TaskHandle | null = null;
-  let lastInsertId = parentHandle.id; // Insert phases after parent (then after each other)
-  let phaseStartTime = Date.now();
-  const taskStartTime = Date.now();
+  let result = gen.next()
+  let currentPhase: string | undefined
+  let currentPhaseHandle: TaskHandle | null = null
+  let lastInsertId = parentHandle.id // Insert phases after parent (then after each other)
+  let phaseStartTime = Date.now()
+  const taskStartTime = Date.now()
 
   while (!result.done) {
-    const info = result.value;
-    const phase = info.phase ?? "";
+    const info = result.value
+    const phase = info.phase ?? ""
 
     // When phase changes, complete current phase and start new one (indented)
     if (phase && phase !== currentPhase) {
       if (currentPhaseHandle && currentPhase) {
         // Complete previous phase with timing
-        const elapsed = Date.now() - phaseStartTime;
-        const prevLabel = PHASE_LABELS[currentPhase] ?? currentPhase;
-        currentPhaseHandle.complete(`${prevLabel} (${elapsed}ms)`);
+        const elapsed = Date.now() - phaseStartTime
+        const prevLabel = PHASE_LABELS[currentPhase] ?? currentPhase
+        currentPhaseHandle.complete(`${prevLabel} (${elapsed}ms)`)
       }
 
       // Start new phase line (indented under parent, inserted after last phase)
-      currentPhase = phase;
-      phaseStartTime = Date.now();
-      const phaseLabel = PHASE_LABELS[phase] ?? phase;
+      currentPhase = phase
+      phaseStartTime = Date.now()
+      const phaseLabel = PHASE_LABELS[phase] ?? phase
       currentPhaseHandle = multi.add(phaseLabel, {
         type: "spinner",
         indent: 1,
         insertAfter: lastInsertId,
-      });
-      lastInsertId = currentPhaseHandle.id;
-      currentPhaseHandle.start();
+      })
+      lastInsertId = currentPhaseHandle.id
+      currentPhaseHandle.start()
     }
 
     // Update progress count on current phase line
     if (currentPhaseHandle && info.total && info.total > 0) {
-      const phaseLabel = PHASE_LABELS[phase] ?? phase;
+      const phaseLabel = PHASE_LABELS[phase] ?? phase
       currentPhaseHandle.setTitle(
         `${phaseLabel} (${info.current}/${info.total})`,
-      );
+      )
     }
 
     // Yield to event loop for animation
-    await new Promise((r) => setTimeout(r, 0));
+    await new Promise((r) => setTimeout(r, 0))
 
-    result = gen.next();
+    result = gen.next()
   }
 
   // Complete final phase
   if (currentPhaseHandle && currentPhase) {
-    const elapsed = Date.now() - phaseStartTime;
-    const finalLabel = PHASE_LABELS[currentPhase] ?? currentPhase;
-    currentPhaseHandle.complete(`${finalLabel} (${elapsed}ms)`);
+    const elapsed = Date.now() - phaseStartTime
+    const finalLabel = PHASE_LABELS[currentPhase] ?? currentPhase
+    currentPhaseHandle.complete(`${finalLabel} (${elapsed}ms)`)
   }
 
   // Complete parent task with total timing
-  const totalElapsed = Date.now() - taskStartTime;
-  parentHandle.complete(`${baseTitle} (${totalElapsed}ms)`);
+  const totalElapsed = Date.now() - taskStartTime
+  parentHandle.complete(`${baseTitle} (${totalElapsed}ms)`)
 
-  return result.value;
+  return result.value
 }
 
 function isGenerator(
@@ -226,7 +226,7 @@ function isGenerator(
     typeof value === "object" &&
     typeof (value as Generator).next === "function" &&
     typeof (value as Generator).throw === "function"
-  );
+  )
 }
 
 function isPromiseLike(value: unknown): value is PromiseLike<unknown> {
@@ -234,5 +234,5 @@ function isPromiseLike(value: unknown): value is PromiseLike<unknown> {
     value !== null &&
     typeof value === "object" &&
     typeof (value as PromiseLike<unknown>).then === "function"
-  );
+  )
 }

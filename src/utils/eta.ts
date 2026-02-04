@@ -4,16 +4,16 @@
 
 /** Sample point for ETA calculation */
 export interface ETASample {
-  time: number;
-  value: number;
+  time: number
+  value: number
 }
 
 /** ETA calculation result */
 export interface ETAResult {
   /** Estimated seconds remaining, or null if insufficient data */
-  seconds: number | null;
+  seconds: number | null
   /** Formatted ETA string (e.g., "1:30", "2:15:30", "--:--") */
-  formatted: string;
+  formatted: string
 }
 
 /**
@@ -40,23 +40,23 @@ export function calculateETA(
   total: number,
 ): number | null {
   if (buffer.length < 2) {
-    return null;
+    return null
   }
 
-  const first = buffer[0]!;
-  const last = buffer[buffer.length - 1]!;
+  const first = buffer[0]!
+  const last = buffer[buffer.length - 1]!
 
-  const elapsed = (last.time - first.time) / 1000; // seconds
-  const progress = last.value - first.value;
+  const elapsed = (last.time - first.time) / 1000 // seconds
+  const progress = last.value - first.value
 
   if (elapsed <= 0 || progress <= 0) {
-    return null;
+    return null
   }
 
-  const rate = progress / elapsed; // items per second
-  const remaining = total - current;
+  const rate = progress / elapsed // items per second
+  const remaining = total - current
 
-  return remaining / rate;
+  return remaining / rate
 }
 
 /**
@@ -75,23 +75,23 @@ export function calculateETA(
  */
 export function formatETA(eta: number | null): string {
   if (eta === null || !isFinite(eta)) {
-    return "--:--";
+    return "--:--"
   }
 
   if (eta > 86400) {
     // > 24 hours
-    return ">1d";
+    return ">1d"
   }
 
-  const hours = Math.floor(eta / 3600);
-  const minutes = Math.floor((eta % 3600) / 60);
-  const seconds = Math.floor(eta % 60);
+  const hours = Math.floor(eta / 3600)
+  const minutes = Math.floor((eta % 3600) / 60)
+  const seconds = Math.floor(eta % 60)
 
   if (hours > 0) {
-    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
   }
 
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`
 }
 
 /**
@@ -107,15 +107,15 @@ export function getETA(
   current: number,
   total: number,
 ): ETAResult {
-  const seconds = calculateETA(buffer, current, total);
+  const seconds = calculateETA(buffer, current, total)
   return {
     seconds,
     formatted: formatETA(seconds),
-  };
+  }
 }
 
 /** Default buffer size for ETA smoothing */
-export const DEFAULT_ETA_BUFFER_SIZE = 10;
+export const DEFAULT_ETA_BUFFER_SIZE = 10
 
 /**
  * Create an ETA tracker with automatic buffer management
@@ -134,30 +134,30 @@ export const DEFAULT_ETA_BUFFER_SIZE = 10;
  * ```
  */
 export function createETATracker(bufferSize = DEFAULT_ETA_BUFFER_SIZE) {
-  const buffer: ETASample[] = [];
+  const buffer: ETASample[] = []
 
   return {
     /** Record a new sample */
     record(value: number): void {
-      buffer.push({ time: Date.now(), value });
+      buffer.push({ time: Date.now(), value })
       if (buffer.length > bufferSize) {
-        buffer.shift();
+        buffer.shift()
       }
     },
 
     /** Get current ETA */
     getETA(current: number, total: number): ETAResult {
-      return getETA(buffer, current, total);
+      return getETA(buffer, current, total)
     },
 
     /** Reset the buffer */
     reset(): void {
-      buffer.length = 0;
+      buffer.length = 0
     },
 
     /** Get buffer for external use */
     getBuffer(): readonly ETASample[] {
-      return buffer;
+      return buffer
     },
-  };
+  }
 }

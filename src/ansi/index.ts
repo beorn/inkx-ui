@@ -40,4 +40,4 @@ export {
   // Terminal detection
   isTTY,
   getTerminalWidth,
-} from "../cli/ansi.js";
+} from "../cli/ansi.js"

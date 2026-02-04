@@ -27,14 +27,14 @@
  * ```
  */
 
-export { withSpinner, attachSpinner } from "./with-spinner.js";
-export { withProgress, createProgressCallback } from "./with-progress.js";
-export { wrapGenerator, withIterableProgress } from "./wrap-generator.js";
-export { wrapEmitter, waitForEvent } from "./wrap-emitter.js";
-export { withSelect, createSelect } from "./with-select.js";
-export { withTextInput, createTextInput } from "./with-text-input.js";
+export { withSpinner, attachSpinner } from "./with-spinner.js"
+export { withProgress, createProgressCallback } from "./with-progress.js"
+export { wrapGenerator, withIterableProgress } from "./wrap-generator.js"
+export { wrapEmitter, waitForEvent } from "./wrap-emitter.js"
+export { withSelect, createSelect } from "./with-select.js"
+export { withTextInput, createTextInput } from "./with-text-input.js"
 export type {
   ProgressCallback,
   ProgressInfo,
   TextInputOptions,
-} from "../types.js";
+} from "../types.js"

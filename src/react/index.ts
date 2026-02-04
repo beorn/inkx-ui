@@ -24,7 +24,7 @@
  * ```
  */
 
-export { Spinner, useSpinnerFrame } from "./Spinner.js";
-export { ProgressBar, useProgressBar } from "./ProgressBar.js";
-export { Task, Tasks, useTasks } from "./Tasks.js";
-export { ProgressProvider, useProgress, ProgressIndicator } from "./context.js";
+export { Spinner, useSpinnerFrame } from "./Spinner.js"
+export { ProgressBar, useProgressBar } from "./ProgressBar.js"
+export { Task, Tasks, useTasks } from "./Tasks.js"
+export { ProgressProvider, useProgress, ProgressIndicator } from "./context.js"

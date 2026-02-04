@@ -20,11 +20,11 @@
  * ```
  */
 
-export { TextInput, useTextInput } from "./TextInput.js";
-export { Select, useSelect } from "./Select.js";
+export { TextInput, useTextInput } from "./TextInput.js"
+export { Select, useSelect } from "./Select.js"
 export type {
   TextInputProps,
   TextInputOptions,
   SelectProps,
   SelectOption,
-} from "../types.js";
+} from "../types.js"

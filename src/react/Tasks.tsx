@@ -2,9 +2,9 @@
  * React Tasks component - listr2-style task list for TUI apps
  */
 
-import React from "react";
-import type { TaskProps, TaskStatus } from "../types.js";
-import { useSpinnerFrame } from "./Spinner.js";
+import React from "react"
+import type { TaskProps, TaskStatus } from "../types.js"
+import { useSpinnerFrame } from "./Spinner.js"
 
 /** Status icons for tasks */
 const STATUS_ICONS: Record<TaskStatus, string> = {
@@ -13,7 +13,7 @@ const STATUS_ICONS: Record<TaskStatus, string> = {
   completed: "✔",
   failed: "✖",
   skipped: "⊘",
-};
+}
 
 /** Status colors */
 const STATUS_COLORS: Record<TaskStatus, string> = {
@@ -22,7 +22,7 @@ const STATUS_COLORS: Record<TaskStatus, string> = {
   completed: "green",
   failed: "red",
   skipped: "yellow",
-};
+}
 
 /**
  * Single task component
@@ -39,9 +39,9 @@ export function Task({
   status,
   children,
 }: TaskProps): React.ReactElement {
-  const spinnerFrame = useSpinnerFrame("dots");
-  const icon = status === "running" ? spinnerFrame : STATUS_ICONS[status];
-  const color = STATUS_COLORS[status];
+  const spinnerFrame = useSpinnerFrame("dots")
+  const icon = status === "running" ? spinnerFrame : STATUS_ICONS[status]
+  const color = STATUS_COLORS[status]
 
   return (
     <div data-progressx-task data-status={status} data-color={color}>
@@ -51,7 +51,7 @@ export function Task({
         <div data-children>{children as React.ReactNode}</div>
       ) : null}
     </div>
-  );
+  )
 }
 
 /**
@@ -71,9 +71,9 @@ export function Task({
 export function Tasks({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }): React.ReactElement {
-  return <div data-progressx-tasks>{children}</div>;
+  return <div data-progressx-tasks>{children}</div>
 }
 
 /**
@@ -106,48 +106,48 @@ export function Tasks({
 export function useTasks(initialTasks: Array<{ id: string; title: string }>) {
   const [tasks, setTasks] = React.useState<
     Array<{
-      id: string;
-      title: string;
-      status: TaskStatus;
-      progress?: { current: number; total: number };
+      id: string
+      title: string
+      status: TaskStatus
+      progress?: { current: number; total: number }
     }>
   >(
     initialTasks.map((t) => ({
       ...t,
       status: "pending" as TaskStatus,
     })),
-  );
+  )
 
   const updateTask = (
     id: string,
     updates: Partial<{
-      status: TaskStatus;
-      title: string;
-      progress: { current: number; total: number };
+      status: TaskStatus
+      title: string
+      progress: { current: number; total: number }
     }>,
   ) => {
     setTasks((prev) =>
       prev.map((t) => (t.id === id ? { ...t, ...updates } : t)),
-    );
-  };
+    )
+  }
 
-  const start = (id: string) => updateTask(id, { status: "running" });
+  const start = (id: string) => updateTask(id, { status: "running" })
   const complete = (id: string, title?: string) =>
-    updateTask(id, { status: "completed", ...(title && { title }) });
+    updateTask(id, { status: "completed", ...(title && { title }) })
   const fail = (id: string, title?: string) =>
-    updateTask(id, { status: "failed", ...(title && { title }) });
+    updateTask(id, { status: "failed", ...(title && { title }) })
   const skip = (id: string, title?: string) =>
-    updateTask(id, { status: "skipped", ...(title && { title }) });
+    updateTask(id, { status: "skipped", ...(title && { title }) })
   const updateProgress = (
     id: string,
     progress: { current: number; total: number },
-  ) => updateTask(id, { progress });
+  ) => updateTask(id, { progress })
 
-  const getTask = (id: string) => tasks.find((t) => t.id === id);
+  const getTask = (id: string) => tasks.find((t) => t.id === id)
   const allCompleted = tasks.every(
     (t) => t.status === "completed" || t.status === "skipped",
-  );
-  const hasFailed = tasks.some((t) => t.status === "failed");
+  )
+  const hasFailed = tasks.some((t) => t.status === "failed")
 
   return {
     tasks,
@@ -160,5 +160,5 @@ export function useTasks(initialTasks: Array<{ id: string; title: string }>) {
     getTask,
     allCompleted,
     hasFailed,
-  };
+  }
 }

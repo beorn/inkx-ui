@@ -8,31 +8,51 @@ All exports are **named exports**. Choose the sub-export based on your use case:
 
 ```ts
 // Main - includes CLI components and wrappers (no React dependency)
-import { Spinner, ProgressBar, MultiProgress, withSpinner, withProgress } from '@beorn/inkx-ui'
+import {
+  Spinner,
+  ProgressBar,
+  MultiProgress,
+  withSpinner,
+  withProgress,
+} from "@beorn/inkx-ui"
 
 // CLI mode - direct stdout usage, no React
-import { Spinner, ProgressBar, MultiProgress } from '@beorn/inkx-ui/cli'
+import { Spinner, ProgressBar, MultiProgress } from "@beorn/inkx-ui/cli"
 
 // React components - for inkx/Ink TUI apps
-import { Spinner, ProgressBar, Tasks, Task, useProgress, ProgressProvider } from '@beorn/inkx-ui/react'
+import {
+  Spinner,
+  ProgressBar,
+  Tasks,
+  Task,
+  useProgress,
+  ProgressProvider,
+} from "@beorn/inkx-ui/react"
 
 // Wrappers - ergonomic async pattern adapters
-import { withSpinner, withProgress, wrapGenerator, wrapEmitter, withSelect, withTextInput } from '@beorn/inkx-ui/wrappers'
+import {
+  withSpinner,
+  withProgress,
+  wrapGenerator,
+  wrapEmitter,
+  withSelect,
+  withTextInput,
+} from "@beorn/inkx-ui/wrappers"
 
 // Progress - declarative steps API (recommended for multi-step operations)
-import { steps, step } from '@beorn/inkx-ui/progress'
+import { steps, step } from "@beorn/inkx-ui/progress"
 
 // Input - React input components
-import { TextInput, Select } from '@beorn/inkx-ui/input'
+import { TextInput, Select } from "@beorn/inkx-ui/input"
 
 // Display - React display components
-import { Table } from '@beorn/inkx-ui/display'
+import { Table } from "@beorn/inkx-ui/display"
 
 // ANSI - low-level terminal control
-import { CURSOR_HIDE, CURSOR_SHOW, write, isTTY } from '@beorn/inkx-ui/ansi'
+import { CURSOR_HIDE, CURSOR_SHOW, write, isTTY } from "@beorn/inkx-ui/ansi"
 
 // Utils - ETA calculation
-import { createETATracker, formatETA } from '@beorn/inkx-ui/utils'
+import { createETATracker, formatETA } from "@beorn/inkx-ui/utils"
 ```
 
 ## Common Patterns
@@ -40,34 +60,35 @@ import { createETATracker, formatETA } from '@beorn/inkx-ui/utils'
 ### Declarative Steps (Recommended)
 
 ```ts
-import { steps, step } from '@beorn/inkx-ui/progress'
+import { steps, step } from "@beorn/inkx-ui/progress"
 
 // Auto-naming from function names
 const loader = steps({
-  loadModules,               // "Load modules"
-  loadRepo: {                // Group: "Load repo"
-    discover,                //   "Discover"
-    parse,                   //   "Parse"
+  loadModules, // "Load modules"
+  loadRepo: {
+    // Group: "Load repo"
+    discover, //   "Discover"
+    parse, //   "Parse"
   },
 })
 
 const results = await loader.run({ clear: true })
 
 // Single step
-const data = await step('Loading data').wrap(fetchData())
+const data = await step("Loading data").wrap(fetchData())
 ```
 
 ### Promise Wrapper
 
 ```ts
-import { withSpinner } from '@beorn/inkx-ui/wrappers'
+import { withSpinner } from "@beorn/inkx-ui/wrappers"
 
 // Wrap any promise
-const data = await withSpinner(fetchData(), 'Loading...')
+const data = await withSpinner(fetchData(), "Loading...")
 
 // With options
-const data = await withSpinner(operation(), 'Processing...', {
-  style: 'arc',
+const data = await withSpinner(operation(), "Processing...", {
+  style: "arc",
   clearOnComplete: true,
 })
 ```
@@ -75,51 +96,48 @@ const data = await withSpinner(operation(), 'Processing...', {
 ### Callback-Based APIs
 
 ```ts
-import { withProgress } from '@beorn/inkx-ui/wrappers'
+import { withProgress } from "@beorn/inkx-ui/wrappers"
 
 // Wrap callback-based APIs (perfect for existing onProgress patterns)
-await withProgress(
-  (onProgress) => manager.syncFromFs(onProgress),
-  {
-    phases: {
-      scanning: 'Scanning files',
-      reconciling: 'Reconciling changes',
-      rules: 'Evaluating rules',
-    },
-  }
-)
+await withProgress((onProgress) => manager.syncFromFs(onProgress), {
+  phases: {
+    scanning: "Scanning files",
+    reconciling: "Reconciling changes",
+    rules: "Evaluating rules",
+  },
+})
 ```
 
 ### CLI Spinner
 
 ```ts
-import { Spinner } from '@beorn/inkx-ui/cli'
+import { Spinner } from "@beorn/inkx-ui/cli"
 
 // Quick start/stop
-const stop = Spinner.start('Loading...')
+const stop = Spinner.start("Loading...")
 await doWork()
 stop()
 
 // With success/fail
-const spinner = new Spinner('Processing...')
+const spinner = new Spinner("Processing...")
 spinner.start()
 try {
   await work()
-  spinner.succeed('Done!')
+  spinner.succeed("Done!")
 } catch (e) {
-  spinner.fail('Failed')
+  spinner.fail("Failed")
 }
 ```
 
 ### Multi-Task Display
 
 ```ts
-import { MultiProgress } from '@beorn/inkx-ui/cli'
+import { MultiProgress } from "@beorn/inkx-ui/cli"
 
 const multi = new MultiProgress()
 
-const download = multi.add('Downloading files', { type: 'bar', total: 100 })
-const process = multi.add('Processing', { type: 'spinner' })
+const download = multi.add("Downloading files", { type: "bar", total: 100 })
+const process = multi.add("Processing", { type: "spinner" })
 
 multi.start()
 
@@ -171,21 +189,21 @@ function DeepComponent() {
 ### Interactive Prompts
 
 ```ts
-import { withSelect, withTextInput } from '@beorn/inkx-ui/wrappers'
+import { withSelect, withTextInput } from "@beorn/inkx-ui/wrappers"
 
 // Selection
 const choice = await withSelect({
-  message: 'Choose environment:',
+  message: "Choose environment:",
   options: [
-    { label: 'Development', value: 'dev' },
-    { label: 'Production', value: 'prod' },
+    { label: "Development", value: "dev" },
+    { label: "Production", value: "prod" },
   ],
 })
 
 // Text input
 const name = await withTextInput({
-  message: 'Enter project name:',
-  placeholder: 'my-project',
+  message: "Enter project name:",
+  placeholder: "my-project",
 })
 ```
 
@@ -195,86 +213,86 @@ const name = await withTextInput({
 
 ```ts
 // WRONG - requires React even for CLI-only usage
-import { Spinner } from '@beorn/inkx-ui'  // This is CLI Spinner, ok
-import { Task } from '@beorn/inkx-ui'      // Task only exists in /react
+import { Spinner } from "@beorn/inkx-ui" // This is CLI Spinner, ok
+import { Task } from "@beorn/inkx-ui" // Task only exists in /react
 
 // RIGHT - use specific sub-exports
-import { Spinner } from '@beorn/inkx-ui/cli'      // CLI version
-import { Spinner, Task } from '@beorn/inkx-ui/react'  // React versions
+import { Spinner } from "@beorn/inkx-ui/cli" // CLI version
+import { Spinner, Task } from "@beorn/inkx-ui/react" // React versions
 ```
 
 ### Wrong: Using deprecated task/tasks API
 
 ```ts
 // DEPRECATED - task() and tasks() are legacy
-import { task, tasks } from '@beorn/inkx-ui/progress'
+import { task, tasks } from "@beorn/inkx-ui/progress"
 
 // RIGHT - use steps() for new code
-import { steps, step } from '@beorn/inkx-ui/progress'
+import { steps, step } from "@beorn/inkx-ui/progress"
 
-const data = await step('Loading').wrap(fetchData())
+const data = await step("Loading").wrap(fetchData())
 ```
 
 ### Wrong: Not handling spinner cleanup on error
 
 ```ts
 // WRONG - spinner keeps running if work() throws
-const spinner = new Spinner('Working...')
+const spinner = new Spinner("Working...")
 spinner.start()
 await work()
 spinner.succeed()
 
 // RIGHT - use try/catch or wrapper
-const spinner = new Spinner('Working...')
+const spinner = new Spinner("Working...")
 spinner.start()
 try {
   await work()
   spinner.succeed()
 } catch (e) {
-  spinner.fail('Failed')
+  spinner.fail("Failed")
   throw e
 }
 
 // BETTER - use withSpinner (handles cleanup automatically)
-await withSpinner(work(), 'Working...')
+await withSpinner(work(), "Working...")
 ```
 
 ### Wrong: Manual ANSI cursor management
 
 ```ts
 // WRONG - error-prone, doesn't handle cleanup
-process.stdout.write('\x1b[?25l')  // hide cursor
+process.stdout.write("\x1b[?25l") // hide cursor
 await work()
-process.stdout.write('\x1b[?25h')  // show cursor (skipped on error!)
+process.stdout.write("\x1b[?25h") // show cursor (skipped on error!)
 
 // RIGHT - use withCursor or built-in components
-import { withCursor } from '@beorn/inkx-ui/ansi'
+import { withCursor } from "@beorn/inkx-ui/ansi"
 
 await withCursor(false, async () => {
   await work()
-})  // cursor restored automatically
+}) // cursor restored automatically
 ```
 
 ## Key Types
 
-| Type | Description |
-|------|-------------|
-| `ProgressCallback` | `(info: ProgressInfo) => void` |
-| `ProgressInfo` | `{ phase, current, total, message? }` |
-| `StepsRunner` | Declarative steps executor |
-| `TaskHandle` | Multi-progress task control |
-| `CallableSpinner` | Spinner with `stop()` as function |
+| Type               | Description                           |
+| ------------------ | ------------------------------------- |
+| `ProgressCallback` | `(info: ProgressInfo) => void`        |
+| `ProgressInfo`     | `{ phase, current, total, message? }` |
+| `StepsRunner`      | Declarative steps executor            |
+| `TaskHandle`       | Multi-progress task control           |
+| `CallableSpinner`  | Spinner with `stop()` as function     |
 
 ## Sub-Export Summary
 
-| Export | Use Case |
-|--------|----------|
-| `@beorn/inkx-ui` | CLI components + wrappers (no React) |
-| `@beorn/inkx-ui/cli` | Direct stdout spinners/progress bars |
-| `@beorn/inkx-ui/react` | React components for inkx apps |
-| `@beorn/inkx-ui/wrappers` | Async pattern adapters |
-| `@beorn/inkx-ui/progress` | Declarative steps API |
-| `@beorn/inkx-ui/input` | React input components |
-| `@beorn/inkx-ui/display` | React display components (Table) |
-| `@beorn/inkx-ui/ansi` | Low-level ANSI terminal control |
-| `@beorn/inkx-ui/utils` | ETA calculation utilities |
+| Export                    | Use Case                             |
+| ------------------------- | ------------------------------------ |
+| `@beorn/inkx-ui`          | CLI components + wrappers (no React) |
+| `@beorn/inkx-ui/cli`      | Direct stdout spinners/progress bars |
+| `@beorn/inkx-ui/react`    | React components for inkx apps       |
+| `@beorn/inkx-ui/wrappers` | Async pattern adapters               |
+| `@beorn/inkx-ui/progress` | Declarative steps API                |
+| `@beorn/inkx-ui/input`    | React input components               |
+| `@beorn/inkx-ui/display`  | React display components (Table)     |
+| `@beorn/inkx-ui/ansi`     | Low-level ANSI terminal control      |
+| `@beorn/inkx-ui/utils`    | ETA calculation utilities            |

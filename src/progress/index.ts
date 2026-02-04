@@ -37,22 +37,18 @@ export {
   type StepsDef,
   type StepNode,
   type StepContext,
-} from "./steps.js";
+} from "./steps.js"
 
 // Legacy task wrappers (deprecated - use steps() instead)
 /** @deprecated Use steps() instead */
-export { task, type TaskWrapper } from "./task.js";
+export { task, type TaskWrapper } from "./task.js"
 /** @deprecated Use steps() instead */
-export { tasks, type TaskBuilder, type RunOptions } from "./tasks.js";
+export { tasks, type TaskBuilder, type RunOptions } from "./tasks.js"
 
 // Re-export CLI progress components
-export {
-  Spinner,
-  createSpinner,
-  type CallableSpinner,
-} from "../cli/spinner.js";
-export { ProgressBar } from "../cli/progress-bar.js";
-export { MultiProgress, type TaskHandle } from "../cli/multi-progress.js";
+export { Spinner, createSpinner, type CallableSpinner } from "../cli/spinner.js"
+export { ProgressBar } from "../cli/progress-bar.js"
+export { MultiProgress, type TaskHandle } from "../cli/multi-progress.js"
 
 // Re-export types
-export type { ProgressInfo, StepProgress } from "../types.js";
+export type { ProgressInfo, StepProgress } from "../types.js"
