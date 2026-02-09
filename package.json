@@ -75,8 +75,6 @@
   "scripts": {
     "build": "tsc",
     "test": "bun test",
-    "lint": "eslint src",
-    "format": "prettier --write .",
     "prepublishOnly": "bun run build"
   },
   "dependencies": {
