@@ -127,7 +127,7 @@ async function runGenerator<T>(
     }
 
     // Yield to event loop for animation
-    await new Promise((r) => setImmediate(r))
+    await new Promise((resolve) => setImmediate(resolve))
 
     result = gen.next()
   }

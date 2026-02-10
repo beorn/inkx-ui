@@ -45,4 +45,4 @@ async function demo() {
   )
 }
 
-demo()
+void demo()

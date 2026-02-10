@@ -114,7 +114,7 @@ export function tasks(): TaskBuilder {
           const handle = handles.get(task.title)!
 
           // Force render before potentially blocking operation
-          await new Promise((r) => setImmediate(r))
+          await new Promise((resolve) => setImmediate(resolve))
 
           const result = task.work()
 
@@ -199,7 +199,7 @@ async function runGenerator<T>(
     }
 
     // Yield to event loop for animation
-    await new Promise((r) => setTimeout(r, 0))
+    await new Promise((resolve) => setTimeout(resolve, 0))
 
     result = gen.next()
   }

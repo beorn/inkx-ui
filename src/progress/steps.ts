@@ -226,7 +226,7 @@ function createFluentBuilder(): StepBuilder {
           const handle = handles.get(step.title)!
 
           // Yield to event loop before potentially blocking work
-          await new Promise((r) => setImmediate(r))
+          await new Promise((resolve) => setImmediate(resolve))
 
           const result = step.work(createNoopStepController())
 
@@ -371,7 +371,7 @@ async function runAsyncGenerator<T>(
     processYield(result.value, state, multi)
 
     // Yield to event loop for animation
-    await new Promise((r) => setTimeout(r, 0))
+    await new Promise((resolve) => setTimeout(resolve, 0))
 
     result = await gen.next()
   }
@@ -413,7 +413,7 @@ async function runSyncGenerator<T>(
     processYield(result.value, state, multi)
 
     // Yield to event loop for animation
-    await new Promise((r) => setTimeout(r, 0))
+    await new Promise((resolve) => setTimeout(resolve, 0))
 
     result = gen.next()
   }

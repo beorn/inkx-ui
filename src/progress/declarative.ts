@@ -152,7 +152,7 @@ export function stepsDeclarative<T extends StepsDef>(def: T): StepsRunner<T> {
 
       // Yield to event loop to ensure initial render is displayed
       // before we start modifying task states
-      await new Promise((r) => setImmediate(r))
+      await new Promise((resolve) => setImmediate(resolve))
 
       const results: Record<string, unknown> = {}
 
@@ -204,7 +204,7 @@ export function stepsDeclarative<T extends StepsDef>(def: T): StepsRunner<T> {
 
       // Yield to event loop to ensure initial render is displayed
       // before we start modifying task states
-      await new Promise((r) => setImmediate(r))
+      await new Promise((resolve) => setImmediate(resolve))
 
       let previousResult: unknown = undefined
 
@@ -287,7 +287,7 @@ async function executeStep(
   const startTime = Date.now()
 
   // Yield to event loop before starting
-  await new Promise((r) => setImmediate(r))
+  await new Promise((resolve) => setImmediate(resolve))
 
   // Create step context for ALS
   const ctx = createStepContext(node.label, handle, (subLabel) => {
@@ -399,7 +399,7 @@ async function runGenerator<T>(
     }
 
     // Yield to event loop for animation
-    await new Promise((r) => setTimeout(r, 0))
+    await new Promise((resolve) => setTimeout(resolve, 0))
 
     result = gen.next()
   }
@@ -480,7 +480,7 @@ async function runAsyncGenerator<T>(
     }
 
     // Yield to event loop for animation
-    await new Promise((r) => setTimeout(r, 0))
+    await new Promise((resolve) => setTimeout(resolve, 0))
 
     result = await gen.next()
   }

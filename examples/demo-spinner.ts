@@ -30,4 +30,4 @@ async function demo() {
   console.log("\n✨ Demo complete!")
 }
 
-demo()
+void demo()
