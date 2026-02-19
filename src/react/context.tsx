@@ -54,11 +54,7 @@ const ProgressContext = createContext<ProgressContextState | null>(null)
  * }
  * ```
  */
-export function ProgressProvider({
-  children,
-}: {
-  children: React.ReactNode
-}): React.ReactElement {
+export function ProgressProvider({ children }: { children: React.ReactNode }): React.ReactElement {
   const [isLoading, setIsLoading] = useState(false)
   const [loadingText, setLoadingText] = useState("")
   const [spinnerStyle, setSpinnerStyle] = useState<SpinnerStyle>("dots")
@@ -67,14 +63,11 @@ export function ProgressProvider({
     total: number
   } | null>(null)
 
-  const showSpinner = useCallback(
-    (text: string, style: SpinnerStyle = "dots") => {
-      setLoadingText(text)
-      setSpinnerStyle(style)
-      setIsLoading(true)
-    },
-    [],
-  )
+  const showSpinner = useCallback((text: string, style: SpinnerStyle = "dots") => {
+    setLoadingText(text)
+    setSpinnerStyle(style)
+    setIsLoading(true)
+  }, [])
 
   const hideSpinner = useCallback(() => {
     setIsLoading(false)
@@ -103,11 +96,7 @@ export function ProgressProvider({
     clearProgress,
   }
 
-  return (
-    <ProgressContext.Provider value={value}>
-      {children}
-    </ProgressContext.Provider>
-  )
+  return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>
 }
 
 /**

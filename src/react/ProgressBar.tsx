@@ -4,11 +4,7 @@
 
 import React, { useState, useEffect, useRef } from "react"
 import type { ProgressBarProps } from "../types.js"
-import {
-  getETA,
-  DEFAULT_ETA_BUFFER_SIZE,
-  type ETASample,
-} from "../utils/eta.js"
+import { getETA, DEFAULT_ETA_BUFFER_SIZE, type ETASample } from "../utils/eta.js"
 
 /**
  * Progress bar component for React TUI apps

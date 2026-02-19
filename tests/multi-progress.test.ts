@@ -333,12 +333,7 @@ describe("MultiProgress", () => {
         const task = multi.add("Chained task", { type: "bar", total: 100 })
 
         // All methods should be chainable
-        task
-          .start()
-          .update(25)
-          .update(50)
-          .setTitle("Almost done")
-          .complete("Done!")
+        task.start().update(25).update(50).setTitle("Almost done").complete("Done!")
 
         expect(task.status).toBe("completed")
       })

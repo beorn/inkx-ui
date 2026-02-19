@@ -145,9 +145,7 @@ export function useTextInput(
 
       if (key.backspace || key.delete) {
         if (cursorPosition > 0) {
-          setValue(
-            (v) => v.slice(0, cursorPosition - 1) + v.slice(cursorPosition),
-          )
+          setValue((v) => v.slice(0, cursorPosition - 1) + v.slice(cursorPosition))
           setCursorPosition((p) => Math.max(0, p - 1))
         }
         return
@@ -169,9 +167,7 @@ export function useTextInput(
       }
 
       // Insert character at cursor position
-      setValue(
-        (v) => v.slice(0, cursorPosition) + input + v.slice(cursorPosition),
-      )
+      setValue((v) => v.slice(0, cursorPosition) + input + v.slice(cursorPosition))
       setCursorPosition((p) => p + input.length)
     },
     [value, cursorPosition, options.onSubmit],
@@ -221,17 +217,11 @@ interface InputKey {
 /**
  * Find a matching autocomplete suggestion for the current input
  */
-function getAutocompleteSuggestion(
-  value: string,
-  autocomplete?: string[],
-): string | undefined {
+function getAutocompleteSuggestion(value: string, autocomplete?: string[]): string | undefined {
   if (!value || !autocomplete?.length) {
     return undefined
   }
 
   const lowerValue = value.toLowerCase()
-  return autocomplete.find(
-    (item) =>
-      item.toLowerCase().startsWith(lowerValue) && item.length > value.length,
-  )
+  return autocomplete.find((item) => item.toLowerCase().startsWith(lowerValue) && item.length > value.length)
 }

@@ -3,13 +3,7 @@
  */
 
 import { describe, it, expect } from "vitest"
-import {
-  calculateETA,
-  formatETA,
-  getETA,
-  createETATracker,
-  DEFAULT_ETA_BUFFER_SIZE,
-} from "../src/utils/eta.js"
+import { calculateETA, formatETA, getETA, createETATracker, DEFAULT_ETA_BUFFER_SIZE } from "../src/utils/eta.js"
 
 describe("calculateETA", () => {
   it("returns null with insufficient samples", () => {

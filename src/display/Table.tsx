@@ -45,11 +45,7 @@ const BOX = {
  * }
  * ```
  */
-export function Table({
-  columns,
-  data,
-  border = false,
-}: TableProps): React.ReactElement {
+export function Table({ columns, data, border = false }: TableProps): React.ReactElement {
   // Calculate effective column widths
   const effectiveColumns = calculateColumnWidths(columns, data)
 
@@ -61,9 +57,7 @@ export function Table({
   }
 
   // Header row
-  lines.push(
-    buildDataRow(effectiveColumns, getHeaderRow(effectiveColumns), border),
-  )
+  lines.push(buildDataRow(effectiveColumns, getHeaderRow(effectiveColumns), border))
 
   if (border) {
     // Separator after header
@@ -114,9 +108,7 @@ function calculateColumnWidths(
 /**
  * Create header row object from columns
  */
-function getHeaderRow(
-  columns: Array<TableColumn & { effectiveWidth: number }>,
-): Record<string, unknown> {
+function getHeaderRow(columns: Array<TableColumn & { effectiveWidth: number }>): Record<string, unknown> {
   const row: Record<string, unknown> = {}
   for (const col of columns) {
     row[col.key] = col.header
@@ -131,28 +123,11 @@ function buildBorderLine(
   columns: Array<TableColumn & { effectiveWidth: number }>,
   position: "top" | "middle" | "bottom",
 ): string {
-  const left =
-    position === "top"
-      ? BOX.topLeft
-      : position === "bottom"
-        ? BOX.bottomLeft
-        : BOX.leftT
-  const right =
-    position === "top"
-      ? BOX.topRight
-      : position === "bottom"
-        ? BOX.bottomRight
-        : BOX.rightT
-  const join =
-    position === "top"
-      ? BOX.topT
-      : position === "bottom"
-        ? BOX.bottomT
-        : BOX.cross
+  const left = position === "top" ? BOX.topLeft : position === "bottom" ? BOX.bottomLeft : BOX.leftT
+  const right = position === "top" ? BOX.topRight : position === "bottom" ? BOX.bottomRight : BOX.rightT
+  const join = position === "top" ? BOX.topT : position === "bottom" ? BOX.bottomT : BOX.cross
 
-  const segments = columns.map((col) =>
-    BOX.horizontal.repeat(col.effectiveWidth + 2),
-  )
+  const segments = columns.map((col) => BOX.horizontal.repeat(col.effectiveWidth + 2))
 
   return left + segments.join(join) + right
 }
@@ -171,13 +146,7 @@ function buildDataRow(
   })
 
   if (border) {
-    return (
-      BOX.vertical +
-      " " +
-      cells.join(" " + BOX.vertical + " ") +
-      " " +
-      BOX.vertical
-    )
+    return BOX.vertical + " " + cells.join(" " + BOX.vertical + " ") + " " + BOX.vertical
   }
 
   return cells.join("  ")
@@ -186,11 +155,7 @@ function buildDataRow(
 /**
  * Format a cell value with alignment and truncation
  */
-function formatCell(
-  value: string,
-  width: number,
-  align: "left" | "center" | "right",
-): string {
+function formatCell(value: string, width: number, align: "left" | "center" | "right"): string {
   // Truncate if too long
   if (value.length > width) {
     return value.slice(0, width - 1) + "…"

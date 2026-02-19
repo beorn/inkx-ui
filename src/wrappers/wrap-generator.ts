@@ -26,9 +26,7 @@ import { CURSOR_HIDE, CURSOR_SHOW, write, isTTY } from "../cli/ansi.js"
  */
 export async function wrapGenerator<T>(
   generator: ProgressGenerator<T>,
-  textOrFormat:
-    | string
-    | ((progress: { current: number; total: number }) => string),
+  textOrFormat: string | ((progress: { current: number; total: number }) => string),
   options: { clearOnComplete?: boolean } = {},
 ): Promise<T> {
   const stream = process.stdout
@@ -38,9 +36,7 @@ export async function wrapGenerator<T>(
   const label = isCustomFormat ? "" : textOrFormat
 
   const bar = new ProgressBar({
-    format: label
-      ? `${label} [:bar] :current/:total :percent`
-      : ":bar :current/:total :percent",
+    format: label ? `${label} [:bar] :current/:total :percent` : ":bar :current/:total :percent",
     hideCursor: true,
   })
 

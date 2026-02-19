@@ -22,9 +22,4 @@
 
 export { TextInput, useTextInput } from "./TextInput.js"
 export { Select, useSelect } from "./Select.js"
-export type {
-  TextInputProps,
-  TextInputOptions,
-  SelectProps,
-  SelectOption,
-} from "../types.js"
+export type { TextInputProps, TextInputOptions, SelectProps, SelectOption } from "../types.js"

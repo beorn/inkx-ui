@@ -4,15 +4,7 @@
 
 import chalk from "chalk"
 import type { SelectOption, WithSelectOptions } from "../types.js"
-import {
-  CURSOR_HIDE,
-  CURSOR_SHOW,
-  CURSOR_TO_START,
-  CLEAR_LINE_END,
-  cursorUp,
-  write,
-  isTTY,
-} from "../cli/ansi.js"
+import { CURSOR_HIDE, CURSOR_SHOW, CURSOR_TO_START, CLEAR_LINE_END, cursorUp, write, isTTY } from "../cli/ansi.js"
 
 /**
  * Display an interactive selection list in the terminal
@@ -69,33 +61,21 @@ export async function withSelect<T>(
       // Calculate scroll window
       const scrollOffset = Math.max(
         0,
-        Math.min(
-          highlightIndex - Math.floor(maxVisible / 2),
-          options.length - maxVisible,
-        ),
+        Math.min(highlightIndex - Math.floor(maxVisible / 2), options.length - maxVisible),
       )
       const visibleCount = Math.min(maxVisible, options.length)
-      const visibleOptions = options.slice(
-        scrollOffset,
-        scrollOffset + visibleCount,
-      )
+      const visibleOptions = options.slice(scrollOffset, scrollOffset + visibleCount)
       const hasMoreAbove = scrollOffset > 0
       const hasMoreBelow = scrollOffset + visibleCount < options.length
 
       // Render prompt
-      write(
-        `${CURSOR_TO_START}${chalk.bold(prompt)}${CLEAR_LINE_END}\n`,
-        stream,
-      )
+      write(`${CURSOR_TO_START}${chalk.bold(prompt)}${CLEAR_LINE_END}\n`, stream)
 
       let lines = 1
 
       // Render scroll indicator (above)
       if (hasMoreAbove) {
-        write(
-          `${CURSOR_TO_START}  ${chalk.dim("...")}${CLEAR_LINE_END}\n`,
-          stream,
-        )
+        write(`${CURSOR_TO_START}  ${chalk.dim("...")}${CLEAR_LINE_END}\n`, stream)
         lines++
       }
 
@@ -108,19 +88,13 @@ export async function withSelect<T>(
         const indicator = isHighlighted ? chalk.cyan(">") : " "
         const label = isHighlighted ? chalk.cyan(option!.label) : option!.label
 
-        write(
-          `${CURSOR_TO_START}${indicator} ${label}${CLEAR_LINE_END}\n`,
-          stream,
-        )
+        write(`${CURSOR_TO_START}${indicator} ${label}${CLEAR_LINE_END}\n`, stream)
         lines++
       }
 
       // Render scroll indicator (below)
       if (hasMoreBelow) {
-        write(
-          `${CURSOR_TO_START}  ${chalk.dim("...")}${CLEAR_LINE_END}\n`,
-          stream,
-        )
+        write(`${CURSOR_TO_START}  ${chalk.dim("...")}${CLEAR_LINE_END}\n`, stream)
         lines++
       }
 
@@ -214,14 +188,7 @@ export async function withSelect<T>(
  */
 export function createSelect(
   defaultOptions: WithSelectOptions = {},
-): <T>(
-  prompt: string,
-  options: SelectOption<T>[],
-  overrides?: WithSelectOptions,
-) => Promise<T> {
-  return <T>(
-    prompt: string,
-    options: SelectOption<T>[],
-    overrides: WithSelectOptions = {},
-  ) => withSelect(prompt, options, { ...defaultOptions, ...overrides })
+): <T>(prompt: string, options: SelectOption<T>[], overrides?: WithSelectOptions) => Promise<T> {
+  return <T>(prompt: string, options: SelectOption<T>[], overrides: WithSelectOptions = {}) =>
+    withSelect(prompt, options, { ...defaultOptions, ...overrides })
 }

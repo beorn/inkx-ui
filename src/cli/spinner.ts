@@ -4,14 +4,7 @@
 
 import chalk from "chalk"
 import type { SpinnerOptions, SpinnerStyle } from "../types.js"
-import {
-  CURSOR_HIDE,
-  CURSOR_SHOW,
-  CURSOR_TO_START,
-  CLEAR_LINE_END,
-  write,
-  isTTY,
-} from "./ansi.js"
+import { CURSOR_HIDE, CURSOR_SHOW, CURSOR_TO_START, CLEAR_LINE_END, write, isTTY } from "./ansi.js"
 
 /** Spinner animation frames by style */
 export const SPINNER_FRAMES: Record<SpinnerStyle, string[]> = {
@@ -55,10 +48,7 @@ export class Spinner {
   private isSpinning = false
 
   constructor(textOrOptions?: string | SpinnerOptions) {
-    const options: SpinnerOptions =
-      typeof textOrOptions === "string"
-        ? { text: textOrOptions }
-        : (textOrOptions ?? {})
+    const options: SpinnerOptions = typeof textOrOptions === "string" ? { text: textOrOptions } : (textOrOptions ?? {})
 
     this.text = options.text ?? ""
     this.style = options.style ?? "dots"
@@ -107,8 +97,7 @@ export class Spinner {
 
     this.render()
     this.timer = setInterval(() => {
-      this.frameIndex =
-        (this.frameIndex + 1) % SPINNER_FRAMES[this.style].length
+      this.frameIndex = (this.frameIndex + 1) % SPINNER_FRAMES[this.style].length
       this.render()
     }, this.interval)
 
@@ -179,9 +168,7 @@ export class Spinner {
 
   private render(): void {
     const frame = SPINNER_FRAMES[this.style][this.frameIndex]
-    const colorFn = (chalk as unknown as Record<string, (s: string) => string>)[
-      this.color
-    ]
+    const colorFn = (chalk as unknown as Record<string, (s: string) => string>)[this.color]
     const coloredFrame = colorFn ? colorFn(frame!) : frame!
     const output = this.text ? `${coloredFrame} ${this.text}` : coloredFrame
 

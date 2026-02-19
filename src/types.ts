@@ -37,22 +37,13 @@ export interface StepProgress {
 export type ProgressCallback = (info: ProgressInfo) => void
 
 /** Generator that yields progress info */
-export type ProgressGenerator<T = void> = Generator<
-  { current: number; total: number },
-  T,
-  unknown
->
+export type ProgressGenerator<T = void> = Generator<{ current: number; total: number }, T, unknown>
 
 /** Spinner animation styles */
 export type SpinnerStyle = "dots" | "line" | "arc" | "bounce" | "pulse"
 
 /** Task status for multi-task display */
-export type TaskStatus =
-  | "pending"
-  | "running"
-  | "completed"
-  | "failed"
-  | "skipped"
+export type TaskStatus = "pending" | "running" | "completed" | "failed" | "skipped"
 
 /** Options for Spinner class */
 export interface SpinnerOptions {

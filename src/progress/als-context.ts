@@ -75,10 +75,7 @@ export function step(): StepContext {
 /**
  * Run a function with step context (internal use by runner)
  */
-export function runWithStepContext<T>(
-  ctx: InternalStepContext,
-  fn: () => T,
-): T {
+export function runWithStepContext<T>(ctx: InternalStepContext, fn: () => T): T {
   return stepContext.run(ctx, fn)
 }
 

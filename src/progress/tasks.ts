@@ -26,10 +26,7 @@ import { MultiProgress, type TaskHandle } from "../cli/multi-progress.js"
 
 // Node.js globals for yielding to event loop
 declare function setImmediate(callback: (value?: unknown) => void): unknown
-declare function setTimeout(
-  callback: (value?: unknown) => void,
-  ms: number,
-): unknown
+declare function setTimeout(callback: (value?: unknown) => void, ms: number): unknown
 
 /** Phase labels for common operations */
 const PHASE_LABELS: Record<string, string> = {
@@ -67,10 +64,7 @@ export interface TaskBuilder {
    * @param title - Display title
    * @param work - Function, async function, or generator
    */
-  add<T>(
-    title: string,
-    work: () => T | PromiseLike<T> | Generator<ProgressInfo, T, unknown>,
-  ): TaskBuilder
+  add<T>(title: string, work: () => T | PromiseLike<T> | Generator<ProgressInfo, T, unknown>): TaskBuilder
 
   /**
    * Run all tasks in sequence
@@ -89,10 +83,7 @@ export function tasks(): TaskBuilder {
   const taskList: TaskDef[] = []
 
   const builder: TaskBuilder = {
-    add<T>(
-      title: string,
-      work: () => T | PromiseLike<T> | Generator<ProgressInfo, T, unknown>,
-    ): TaskBuilder {
+    add<T>(title: string, work: () => T | PromiseLike<T> | Generator<ProgressInfo, T, unknown>): TaskBuilder {
       taskList.push({ title, work })
       return builder
     },
@@ -120,12 +111,7 @@ export function tasks(): TaskBuilder {
 
           if (isGenerator(result)) {
             // Generator: parent stays static, phases animate underneath
-            results[task.title] = await runGenerator(
-              result,
-              handle,
-              task.title,
-              multi,
-            )
+            results[task.title] = await runGenerator(result, handle, task.title, multi)
           } else if (isPromiseLike(result)) {
             handle.start()
             results[task.title] = await result
@@ -193,9 +179,7 @@ async function runGenerator<T>(
     // Update progress count on current phase line
     if (currentPhaseHandle && info.total && info.total > 0) {
       const phaseLabel = PHASE_LABELS[phase] ?? phase
-      currentPhaseHandle.setTitle(
-        `${phaseLabel} (${info.current}/${info.total})`,
-      )
+      currentPhaseHandle.setTitle(`${phaseLabel} (${info.current}/${info.total})`)
     }
 
     // Yield to event loop for animation
@@ -218,9 +202,7 @@ async function runGenerator<T>(
   return result.value
 }
 
-function isGenerator(
-  value: unknown,
-): value is Generator<ProgressInfo, unknown, unknown> {
+function isGenerator(value: unknown): value is Generator<ProgressInfo, unknown, unknown> {
   return (
     value !== null &&
     typeof value === "object" &&
@@ -230,9 +212,5 @@ function isGenerator(
 }
 
 function isPromiseLike(value: unknown): value is PromiseLike<unknown> {
-  return (
-    value !== null &&
-    typeof value === "object" &&
-    typeof (value as PromiseLike<unknown>).then === "function"
-  )
+  return value !== null && typeof value === "object" && typeof (value as PromiseLike<unknown>).then === "function"
 }

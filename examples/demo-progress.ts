@@ -40,9 +40,7 @@ async function demo() {
     },
   })
 
-  console.log(
-    `\n✨ Processed ${result.processed} items in ${result.duration}ms`,
-  )
+  console.log(`\n✨ Processed ${result.processed} items in ${result.duration}ms`)
 }
 
 void demo()

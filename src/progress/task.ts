@@ -34,11 +34,7 @@ export interface TaskWrapper {
    * @param work - Promise, function, or generator
    */
   wrap<T>(
-    work:
-      | T
-      | PromiseLike<T>
-      | (() => T | PromiseLike<T>)
-      | (() => Generator<ProgressInfo, T, unknown>),
+    work: T | PromiseLike<T> | (() => T | PromiseLike<T>) | (() => Generator<ProgressInfo, T, unknown>),
   ): Promise<T>
 }
 
@@ -51,11 +47,7 @@ export interface TaskWrapper {
 export function task(title: string): TaskWrapper {
   return {
     async wrap<T>(
-      work:
-        | T
-        | PromiseLike<T>
-        | (() => T | PromiseLike<T>)
-        | (() => Generator<ProgressInfo, T, unknown>),
+      work: T | PromiseLike<T> | (() => T | PromiseLike<T>) | (() => Generator<ProgressInfo, T, unknown>),
     ): Promise<T> {
       const spinner = createSpinner()
       spinner(title)
@@ -67,11 +59,7 @@ export function task(title: string): TaskWrapper {
 
           // Check if it's a generator
           if (isGenerator(result)) {
-            return await runGenerator(
-              result as Generator<ProgressInfo, T, unknown>,
-              spinner,
-              title,
-            )
+            return await runGenerator(result as Generator<ProgressInfo, T, unknown>, spinner, title)
           }
 
           // Check if it's a promise
@@ -136,9 +124,7 @@ async function runGenerator<T>(
   return result.value
 }
 
-function isGenerator(
-  value: unknown,
-): value is Generator<ProgressInfo, unknown, unknown> {
+function isGenerator(value: unknown): value is Generator<ProgressInfo, unknown, unknown> {
   return (
     value !== null &&
     typeof value === "object" &&
@@ -148,9 +134,5 @@ function isGenerator(
 }
 
 function isPromiseLike(value: unknown): value is PromiseLike<unknown> {
-  return (
-    value !== null &&
-    typeof value === "object" &&
-    typeof (value as PromiseLike<unknown>).then === "function"
-  )
+  return value !== null && typeof value === "object" && typeof (value as PromiseLike<unknown>).then === "function"
 }

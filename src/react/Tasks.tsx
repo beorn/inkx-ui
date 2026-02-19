@@ -34,11 +34,7 @@ const STATUS_COLORS: Record<TaskStatus, string> = {
  * </Task>
  * ```
  */
-export function Task({
-  title,
-  status,
-  children,
-}: TaskProps): React.ReactElement {
+export function Task({ title, status, children }: TaskProps): React.ReactElement {
   const spinnerFrame = useSpinnerFrame("dots")
   const icon = status === "running" ? spinnerFrame : STATUS_ICONS[status]
   const color = STATUS_COLORS[status]
@@ -47,9 +43,7 @@ export function Task({
     <div data-progressx-task data-status={status} data-color={color}>
       <span data-icon>{icon}</span>
       <span data-title> {title}</span>
-      {children != null ? (
-        <div data-children>{children as React.ReactNode}</div>
-      ) : null}
+      {children != null ? <div data-children>{children as React.ReactNode}</div> : null}
     </div>
   )
 }
@@ -68,11 +62,7 @@ export function Task({
  * </Tasks>
  * ```
  */
-export function Tasks({
-  children,
-}: {
-  children: React.ReactNode
-}): React.ReactElement {
+export function Tasks({ children }: { children: React.ReactNode }): React.ReactElement {
   return <div data-progressx-tasks>{children}</div>
 }
 
@@ -126,27 +116,17 @@ export function useTasks(initialTasks: Array<{ id: string; title: string }>) {
       progress: { current: number; total: number }
     }>,
   ) => {
-    setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, ...updates } : t)),
-    )
+    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, ...updates } : t)))
   }
 
   const start = (id: string) => updateTask(id, { status: "running" })
-  const complete = (id: string, title?: string) =>
-    updateTask(id, { status: "completed", ...(title && { title }) })
-  const fail = (id: string, title?: string) =>
-    updateTask(id, { status: "failed", ...(title && { title }) })
-  const skip = (id: string, title?: string) =>
-    updateTask(id, { status: "skipped", ...(title && { title }) })
-  const updateProgress = (
-    id: string,
-    progress: { current: number; total: number },
-  ) => updateTask(id, { progress })
+  const complete = (id: string, title?: string) => updateTask(id, { status: "completed", ...(title && { title }) })
+  const fail = (id: string, title?: string) => updateTask(id, { status: "failed", ...(title && { title }) })
+  const skip = (id: string, title?: string) => updateTask(id, { status: "skipped", ...(title && { title }) })
+  const updateProgress = (id: string, progress: { current: number; total: number }) => updateTask(id, { progress })
 
   const getTask = (id: string) => tasks.find((t) => t.id === id)
-  const allCompleted = tasks.every(
-    (t) => t.status === "completed" || t.status === "skipped",
-  )
+  const allCompleted = tasks.every((t) => t.status === "completed" || t.status === "skipped")
   const hasFailed = tasks.some((t) => t.status === "failed")
 
   return {

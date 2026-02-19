@@ -4,10 +4,7 @@
 
 import { describe, it, expect, beforeEach, afterEach } from "vitest"
 import { withSpinner, attachSpinner } from "../src/wrappers/with-spinner.js"
-import {
-  withProgress,
-  createProgressCallback,
-} from "../src/wrappers/with-progress.js"
+import { withProgress, createProgressCallback } from "../src/wrappers/with-progress.js"
 import { wrapGenerator } from "../src/wrappers/wrap-generator.js"
 import type { ProgressCallback } from "../src/types.js"
 
@@ -32,13 +29,9 @@ describe("withSpinner", () => {
   })
 
   it("accepts a function that returns a promise", async () => {
-    const result = await withSpinner(
-      () => Promise.resolve("hello"),
-      "Loading",
-      {
-        clearOnComplete: true,
-      },
-    )
+    const result = await withSpinner(() => Promise.resolve("hello"), "Loading", {
+      clearOnComplete: true,
+    })
     expect(result).toBe("hello")
   })
 
@@ -53,10 +46,7 @@ describe("withSpinner", () => {
 
 describe("attachSpinner", () => {
   it("returns promise and spinner", async () => {
-    const [promise, spinner] = attachSpinner(
-      Promise.resolve("result"),
-      "Loading",
-    )
+    const [promise, spinner] = attachSpinner(Promise.resolve("result"), "Loading")
 
     expect(spinner.spinning).toBe(true)
     const result = await promise

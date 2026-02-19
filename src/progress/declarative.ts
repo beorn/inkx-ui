@@ -12,23 +12,14 @@ import {
   runWithStepContext,
   type InternalStepContext,
 } from "./als-context.js"
-import {
-  parseStepsDef,
-  flattenStepNodes,
-  getLeafNodes,
-  type StepNode,
-  type StepsDef,
-} from "./step-node.js"
+import { parseStepsDef, flattenStepNodes, getLeafNodes, type StepNode, type StepsDef } from "./step-node.js"
 
 // Re-export step() for convenience
 export { step } from "./als-context.js"
 
 // Node.js globals for yielding to event loop
 declare function setImmediate(callback: (value?: unknown) => void): unknown
-declare function setTimeout(
-  callback: (value?: unknown) => void,
-  ms: number,
-): unknown
+declare function setTimeout(callback: (value?: unknown) => void, ms: number): unknown
 
 /**
  * Options for run() and pipe() execution
@@ -42,11 +33,7 @@ export interface ExecuteOptions {
  * Extract the return type from a generator or async generator
  */
 type GeneratorReturn<T> =
-  T extends Generator<unknown, infer R, unknown>
-    ? R
-    : T extends AsyncGenerator<unknown, infer R, unknown>
-      ? R
-      : T
+  T extends Generator<unknown, infer R, unknown> ? R : T extends AsyncGenerator<unknown, infer R, unknown> ? R : T
 
 /**
  * Unwrap the result type, handling generators specially
@@ -221,12 +208,7 @@ export function stepsDeclarative<T extends StepsDef>(def: T): StepsRunner<T> {
               }
             }
 
-            previousResult = await executeStep(
-              node,
-              handles,
-              multi,
-              previousResult,
-            )
+            previousResult = await executeStep(node, handles, multi, previousResult)
 
             // Mark leaf as complete and check group completion
             completedLeaves.add(node)
@@ -258,11 +240,7 @@ export function stepsDeclarative<T extends StepsDef>(def: T): StepsRunner<T> {
 /**
  * Register all steps with MultiProgress upfront
  */
-function registerAllSteps(
-  nodes: StepNode[],
-  multi: MultiProgress,
-  handles: Map<StepNode, TaskHandle>,
-): void {
+function registerAllSteps(nodes: StepNode[], multi: MultiProgress, handles: Map<StepNode, TaskHandle>): void {
   // Register in order without insertAfter - simpler and correct
   for (const node of nodes) {
     const isGroup = node.children && !node.work
@@ -498,11 +476,7 @@ async function runAsyncGenerator<T>(
 /**
  * Set a nested result value by key path
  */
-function setNestedResult(
-  results: Record<string, unknown>,
-  key: string,
-  value: unknown,
-): void {
+function setNestedResult(results: Record<string, unknown>, key: string, value: unknown): void {
   // For now, flat keys only - nested groups would need path handling
   results[key] = value
 }
@@ -510,9 +484,7 @@ function setNestedResult(
 /**
  * Type guards
  */
-function isGenerator(
-  value: unknown,
-): value is Generator<unknown, unknown, unknown> {
+function isGenerator(value: unknown): value is Generator<unknown, unknown, unknown> {
   return (
     value !== null &&
     typeof value === "object" &&
@@ -521,9 +493,7 @@ function isGenerator(
   )
 }
 
-function isAsyncGenerator(
-  value: unknown,
-): value is AsyncGenerator<unknown, unknown, unknown> {
+function isAsyncGenerator(value: unknown): value is AsyncGenerator<unknown, unknown, unknown> {
   return (
     value !== null &&
     typeof value === "object" &&
@@ -543,18 +513,12 @@ interface DeclareSteps {
 
 function isProgressUpdate(value: unknown): value is ProgressUpdate {
   return (
-    value !== null &&
-    typeof value === "object" &&
-    !Array.isArray(value) &&
-    ("current" in value || "total" in value)
+    value !== null && typeof value === "object" && !Array.isArray(value) && ("current" in value || "total" in value)
   )
 }
 
 function isDeclareSteps(value: unknown): value is DeclareSteps {
   return (
-    value !== null &&
-    typeof value === "object" &&
-    "declare" in value &&
-    Array.isArray((value as DeclareSteps).declare)
+    value !== null && typeof value === "object" && "declare" in value && Array.isArray((value as DeclareSteps).declare)
   )
 }

@@ -35,20 +35,14 @@ export const CURSOR_RESTORE = "\x1b[u"
 /**
  * Write to stream with proper handling
  */
-export function write(
-  text: string,
-  stream: NodeJS.WriteStream = process.stdout,
-): void {
+export function write(text: string, stream: NodeJS.WriteStream = process.stdout): void {
   stream.write(text)
 }
 
 /**
  * Clear the current line and write new text
  */
-export function writeLine(
-  text: string,
-  stream: NodeJS.WriteStream = process.stdout,
-): void {
+export function writeLine(text: string, stream: NodeJS.WriteStream = process.stdout): void {
   stream.write(`${CURSOR_TO_START}${text}${CLEAR_LINE_END}`)
 }
 
@@ -56,10 +50,7 @@ export function writeLine(
  * Wrap a function to handle cursor visibility
  * Hides cursor on start, shows on completion/error
  */
-export function withCursor<T>(
-  fn: () => T | Promise<T>,
-  stream: NodeJS.WriteStream = process.stdout,
-): Promise<T> {
+export function withCursor<T>(fn: () => T | Promise<T>, stream: NodeJS.WriteStream = process.stdout): Promise<T> {
   stream.write(CURSOR_HIDE)
 
   const restore = () => stream.write(CURSOR_SHOW)
@@ -89,8 +80,6 @@ export function isTTY(stream: NodeJS.WriteStream = process.stdout): boolean {
 /**
  * Get terminal width
  */
-export function getTerminalWidth(
-  stream: NodeJS.WriteStream = process.stdout,
-): number {
+export function getTerminalWidth(stream: NodeJS.WriteStream = process.stdout): number {
   return stream.columns ?? 80
 }

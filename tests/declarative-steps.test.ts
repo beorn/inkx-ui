@@ -22,9 +22,7 @@ describe("generateLabel", () => {
   it("converts camelCase to Title case", () => {
     expect(generateLabel("loadModules")).toBe("Load modules")
     expect(generateLabel("parseMarkdown")).toBe("Parse markdown")
-    expect(generateLabel("initBoardStateGenerator")).toBe(
-      "Init board state generator",
-    )
+    expect(generateLabel("initBoardStateGenerator")).toBe("Init board state generator")
   })
 
   it("handles single word", () => {

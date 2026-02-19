@@ -8,11 +8,7 @@ import { Table } from "../src/display/Table.js"
 import type { TableColumn } from "../src/types.js"
 
 // Helper to render table and get output string
-function renderTable(
-  columns: TableColumn[],
-  data: Array<Record<string, unknown>>,
-  border = false,
-): string {
+function renderTable(columns: TableColumn[], data: Array<Record<string, unknown>>, border = false): string {
   const element = Table({ columns, data, border })
   return element.props.children as string
 }

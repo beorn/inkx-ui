@@ -7,11 +7,7 @@ import React, { createElement } from "react"
 import { Spinner, useSpinnerFrame } from "../src/react/Spinner.js"
 import { ProgressBar, useProgressBar } from "../src/react/ProgressBar.js"
 import { Task, Tasks, useTasks } from "../src/react/Tasks.js"
-import {
-  ProgressProvider,
-  useProgress,
-  ProgressIndicator,
-} from "../src/react/context.js"
+import { ProgressProvider, useProgress, ProgressIndicator } from "../src/react/context.js"
 
 describe("React Components", () => {
   describe("Spinner", () => {
@@ -96,13 +92,7 @@ describe("React Components", () => {
     })
 
     it("accepts all status values", () => {
-      const statuses = [
-        "pending",
-        "running",
-        "completed",
-        "failed",
-        "skipped",
-      ] as const
+      const statuses = ["pending", "running", "completed", "failed", "skipped"] as const
 
       for (const status of statuses) {
         const element = createElement(Task, { title: "Test", status })
@@ -112,11 +102,7 @@ describe("React Components", () => {
 
     it("accepts children", () => {
       const child = createElement("span", null, "Progress: 50%")
-      const element = createElement(
-        Task,
-        { title: "Processing", status: "running" },
-        child,
-      )
+      const element = createElement(Task, { title: "Processing", status: "running" }, child)
 
       expect(element.props.children).toBe(child)
     })

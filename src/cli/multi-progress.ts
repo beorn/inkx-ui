@@ -4,14 +4,7 @@
 
 import chalk from "chalk"
 import type { SpinnerStyle, TaskStatus } from "../types.js"
-import {
-  CURSOR_HIDE,
-  CURSOR_SHOW,
-  CLEAR_LINE,
-  cursorUp,
-  write,
-  isTTY,
-} from "./ansi.js"
+import { CURSOR_HIDE, CURSOR_SHOW, CLEAR_LINE, cursorUp, write, isTTY } from "./ansi.js"
 import { Spinner, SPINNER_FRAMES } from "./spinner.js"
 import { ProgressBar } from "./progress-bar.js"
 
@@ -249,8 +242,7 @@ export class MultiProgress {
         const barWidth = 20
         const filled = Math.round(barWidth * percent)
         const empty = barWidth - filled
-        const bar =
-          chalk.cyan("█".repeat(filled)) + chalk.gray("░".repeat(empty))
+        const bar = chalk.cyan("█".repeat(filled)) + chalk.gray("░".repeat(empty))
         line += ` ${bar} ${Math.round(percent * 100)}%`
       }
 

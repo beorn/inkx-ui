@@ -46,10 +46,7 @@ interface WrapEmitterConfig {
  * stop();
  * ```
  */
-export function wrapEmitter(
-  emitter: EventEmitter,
-  config: WrapEmitterConfig,
-): () => void {
+export function wrapEmitter(emitter: EventEmitter, config: WrapEmitterConfig): () => void {
   const spinner = new Spinner(config.initialText ?? "")
   const handlers: Map<string, (...args: unknown[]) => void> = new Map()
 
@@ -70,8 +67,7 @@ export function wrapEmitter(
         spinner.succeed()
         cleanup()
       } else if (eventConfig.fail) {
-        const message =
-          data instanceof Error ? data.message : String(data ?? "Failed")
+        const message = data instanceof Error ? data.message : String(data ?? "Failed")
         spinner.fail(message)
         cleanup()
       } else if (eventConfig.stop) {

@@ -34,11 +34,7 @@ export interface ETAResult {
  * // eta = 9 (9 seconds remaining at 10 items/sec)
  * ```
  */
-export function calculateETA(
-  buffer: ETASample[],
-  current: number,
-  total: number,
-): number | null {
+export function calculateETA(buffer: ETASample[], current: number, total: number): number | null {
   if (buffer.length < 2) {
     return null
   }
@@ -102,11 +98,7 @@ export function formatETA(eta: number | null): string {
  * @param total - Total target value
  * @returns Object with seconds (number|null) and formatted string
  */
-export function getETA(
-  buffer: ETASample[],
-  current: number,
-  total: number,
-): ETAResult {
+export function getETA(buffer: ETASample[], current: number, total: number): ETAResult {
   const seconds = calculateETA(buffer, current, total)
   return {
     seconds,

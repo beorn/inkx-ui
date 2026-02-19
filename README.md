@@ -195,10 +195,7 @@ const result = await withSpinner(operation(), "Processing...", {
 })
 
 // Dynamic text
-const result = await withSpinner(
-  longOperation(),
-  (elapsed) => `Processing... (${elapsed}s)`,
-)
+const result = await withSpinner(longOperation(), (elapsed) => `Processing... (${elapsed}s)`)
 ```
 
 #### withProgress
@@ -292,12 +289,7 @@ import { Spinner, ProgressBar, Tasks, Task } from "@beorn/inkx-ui/react";
 #### Hooks
 
 ```tsx
-import {
-  useSpinnerFrame,
-  useProgressBar,
-  useTasks,
-  useProgress,
-} from "@beorn/inkx-ui/react"
+import { useSpinnerFrame, useProgressBar, useTasks, useProgress } from "@beorn/inkx-ui/react"
 
 // Spinner frame for custom components
 const frame = useSpinnerFrame("dots")
@@ -318,11 +310,7 @@ const { showSpinner, hideSpinner, updateProgress } = useProgress()
 #### Context Provider
 
 ```tsx
-import {
-  ProgressProvider,
-  ProgressIndicator,
-  useProgress,
-} from "@beorn/inkx-ui/react"
+import { ProgressProvider, ProgressIndicator, useProgress } from "@beorn/inkx-ui/react"
 
 function App() {
   return (
@@ -381,12 +369,7 @@ try {
       if (lastPhase) process.stdout.write("\n")
       lastPhase = info.phase
     }
-    const phaseName =
-      info.phase === "scanning"
-        ? "Scanning"
-        : info.phase === "reconciling"
-          ? "Reconciling"
-          : "Rules"
+    const phaseName = info.phase === "scanning" ? "Scanning" : info.phase === "reconciling" ? "Reconciling" : "Rules"
     const progress = info.total > 0 ? ` [${info.current}/${info.total}]` : ""
     process.stdout.write(`\r${chalk.dim(phaseName)}${progress}\x1b[K`)
   })

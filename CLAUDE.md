@@ -8,26 +8,13 @@ All exports are **named exports**. Choose the sub-export based on your use case:
 
 ```ts
 // Main - includes CLI components and wrappers (no React dependency)
-import {
-  Spinner,
-  ProgressBar,
-  MultiProgress,
-  withSpinner,
-  withProgress,
-} from "@beorn/inkx-ui"
+import { Spinner, ProgressBar, MultiProgress, withSpinner, withProgress } from "@beorn/inkx-ui"
 
 // CLI mode - direct stdout usage, no React
 import { Spinner, ProgressBar, MultiProgress } from "@beorn/inkx-ui/cli"
 
 // React components - for inkx/Ink TUI apps
-import {
-  Spinner,
-  ProgressBar,
-  Tasks,
-  Task,
-  useProgress,
-  ProgressProvider,
-} from "@beorn/inkx-ui/react"
+import { Spinner, ProgressBar, Tasks, Task, useProgress, ProgressProvider } from "@beorn/inkx-ui/react"
 
 // Wrappers - ergonomic async pattern adapters
 import {

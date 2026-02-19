@@ -61,10 +61,7 @@ export type { StepContext } from "./als-context.js"
 
 // Node.js globals for yielding to event loop
 declare function setImmediate(callback: (value?: unknown) => void): unknown
-declare function setTimeout(
-  callback: (value?: unknown) => void,
-  ms: number,
-): unknown
+declare function setTimeout(callback: (value?: unknown) => void, ms: number): unknown
 
 /** Progress update (object form) */
 interface ProgressUpdate {
@@ -104,12 +101,7 @@ type AsyncGeneratorWork<T> = () => AsyncGenerator<StepYield, T, unknown>
 /** Work function with step controller for sub-step progress */
 type WorkWithStep<T> = (step: StepController) => T | PromiseLike<T>
 
-type WorkFn<T> =
-  | SyncWork<T>
-  | AsyncWork<T>
-  | SyncGeneratorWork<T>
-  | AsyncGeneratorWork<T>
-  | WorkWithStep<T>
+type WorkFn<T> = SyncWork<T> | AsyncWork<T> | SyncGeneratorWork<T> | AsyncGeneratorWork<T> | WorkWithStep<T>
 
 /** Step definition */
 interface StepDef<T = unknown> {
@@ -173,9 +165,7 @@ export interface StepBuilder {
  */
 export function steps<T extends StepsDef>(def: T): StepsRunner<T>
 export function steps(): StepBuilder
-export function steps<T extends StepsDef>(
-  def?: T,
-): StepsRunner<T> | StepBuilder {
+export function steps<T extends StepsDef>(def?: T): StepsRunner<T> | StepBuilder {
   // Declarative mode: object passed
   if (def !== undefined) {
     return stepsDeclarative(def)
@@ -232,20 +222,10 @@ function createFluentBuilder(): StepBuilder {
 
           if (isAsyncGenerator(result)) {
             // Async generator: parent stays static while sub-steps animate
-            results[step.title] = await runAsyncGenerator(
-              result,
-              handle,
-              step.title,
-              multi,
-            )
+            results[step.title] = await runAsyncGenerator(result, handle, step.title, multi)
           } else if (isSyncGenerator(result)) {
             // Sync generator: same handling
-            results[step.title] = await runSyncGenerator(
-              result,
-              handle,
-              step.title,
-              multi,
-            )
+            results[step.title] = await runSyncGenerator(result, handle, step.title, multi)
           } else if (isPromiseLike(result)) {
             handle.start()
             results[step.title] = await result
@@ -273,11 +253,7 @@ function createFluentBuilder(): StepBuilder {
  * - string = start/create a sub-step with that label
  * - { current, total } = update progress on current sub-step
  */
-function processYield(
-  value: StepYield,
-  state: GeneratorState,
-  multi: MultiProgress,
-): void {
+function processYield(value: StepYield, state: GeneratorState, multi: MultiProgress): void {
   // Handle declaration of all sub-steps upfront
   if (isDeclareSteps(value)) {
     for (const label of value.declare) {
@@ -320,19 +296,14 @@ function processYield(
     // Object = progress update on current sub-step
     const { current, total } = value as ProgressUpdate
     if (state.currentHandle && total && total > 0) {
-      state.currentHandle.setTitle(
-        `${state.currentLabel} (${current ?? 0}/${total})`,
-      )
+      state.currentHandle.setTitle(`${state.currentLabel} (${current ?? 0}/${total})`)
     }
   }
 }
 
 function isDeclareSteps(value: StepYield): value is DeclareSteps {
   return (
-    value !== null &&
-    typeof value === "object" &&
-    "declare" in value &&
-    Array.isArray((value as DeclareSteps).declare)
+    value !== null && typeof value === "object" && "declare" in value && Array.isArray((value as DeclareSteps).declare)
   )
 }
 
@@ -431,9 +402,7 @@ async function runSyncGenerator<T>(
   return result.value
 }
 
-function isAsyncGenerator(
-  value: unknown,
-): value is AsyncGenerator<StepYield, unknown, unknown> {
+function isAsyncGenerator(value: unknown): value is AsyncGenerator<StepYield, unknown, unknown> {
   return (
     value !== null &&
     typeof value === "object" &&
@@ -442,9 +411,7 @@ function isAsyncGenerator(
   )
 }
 
-function isSyncGenerator(
-  value: unknown,
-): value is Generator<StepYield, unknown, unknown> {
+function isSyncGenerator(value: unknown): value is Generator<StepYield, unknown, unknown> {
   return (
     value !== null &&
     typeof value === "object" &&
@@ -454,9 +421,5 @@ function isSyncGenerator(
 }
 
 function isPromiseLike(value: unknown): value is PromiseLike<unknown> {
-  return (
-    value !== null &&
-    typeof value === "object" &&
-    typeof (value as PromiseLike<unknown>).then === "function"
-  )
+  return value !== null && typeof value === "object" && typeof (value as PromiseLike<unknown>).then === "function"
 }

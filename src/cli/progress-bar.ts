@@ -4,21 +4,8 @@
 
 import chalk from "chalk"
 import type { ProgressBarOptions } from "../types.js"
-import {
-  CURSOR_HIDE,
-  CURSOR_SHOW,
-  CURSOR_TO_START,
-  CLEAR_LINE_END,
-  write,
-  isTTY,
-  getTerminalWidth,
-} from "./ansi.js"
-import {
-  calculateETA,
-  formatETA,
-  DEFAULT_ETA_BUFFER_SIZE,
-  type ETASample,
-} from "../utils/eta.js"
+import { CURSOR_HIDE, CURSOR_SHOW, CURSOR_TO_START, CLEAR_LINE_END, write, isTTY, getTerminalWidth } from "./ansi.js"
+import { calculateETA, formatETA, DEFAULT_ETA_BUFFER_SIZE, type ETASample } from "../utils/eta.js"
 
 /** Default format string */
 const DEFAULT_FORMAT = ":bar :percent | :current/:total | ETA: :eta"
@@ -117,10 +104,7 @@ export class ProgressBar {
   /**
    * Set the current phase (for multi-phase progress)
    */
-  setPhase(
-    phaseName: string,
-    options?: { current?: number; total?: number },
-  ): this {
+  setPhase(phaseName: string, options?: { current?: number; total?: number }): this {
     this.phase = phaseName
 
     if (options?.total !== undefined) {
@@ -177,14 +161,10 @@ export class ProgressBar {
     // Build the bar
     const completeLength = Math.round(this.width * percent)
     const incompleteLength = this.width - completeLength
-    const bar =
-      this.complete.repeat(completeLength) +
-      this.incomplete.repeat(incompleteLength)
+    const bar = this.complete.repeat(completeLength) + this.incomplete.repeat(incompleteLength)
 
     // Get phase display name
-    const phaseDisplay = this.phase
-      ? (this.phases[this.phase] ?? this.phase)
-      : ""
+    const phaseDisplay = this.phase ? (this.phases[this.phase] ?? this.phase) : ""
 
     // Calculate rate
     const elapsed = this.startTime ? (Date.now() - this.startTime) / 1000 : 0

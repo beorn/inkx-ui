@@ -4,14 +4,7 @@
 
 import chalk from "chalk"
 import type { TextInputOptions } from "../types.js"
-import {
-  CURSOR_HIDE,
-  CURSOR_SHOW,
-  CURSOR_TO_START,
-  CLEAR_LINE_END,
-  write,
-  isTTY,
-} from "../cli/ansi.js"
+import { CURSOR_HIDE, CURSOR_SHOW, CURSOR_TO_START, CLEAR_LINE_END, write, isTTY } from "../cli/ansi.js"
 
 /**
  * Prompt for text input in the terminal
@@ -35,10 +28,7 @@ import {
  * });
  * ```
  */
-export async function withTextInput(
-  prompt: string,
-  options: TextInputOptions = {},
-): Promise<string> {
+export async function withTextInput(prompt: string, options: TextInputOptions = {}): Promise<string> {
   const stream = options.stream ?? process.stdout
   const inputStream = options.inputStream ?? process.stdin
   const isTty = isTTY(stream)
@@ -56,14 +46,10 @@ export async function withTextInput(
 
   // Render the current state
   const render = () => {
-    const displayValue = options.mask
-      ? options.mask.repeat(value.length)
-      : value
+    const displayValue = options.mask ? options.mask.repeat(value.length) : value
 
     const suggestion = getAutocompleteSuggestion(value, options.autocomplete)
-    const suggestionSuffix = suggestion
-      ? chalk.dim(suggestion.slice(value.length))
-      : ""
+    const suggestionSuffix = suggestion ? chalk.dim(suggestion.slice(value.length)) : ""
 
     // Build cursor display
     const beforeCursor = displayValue.slice(0, cursorPosition)
@@ -74,10 +60,7 @@ export async function withTextInput(
     const showPlaceholder = !value && options.placeholder
     const inputDisplay = showPlaceholder
       ? chalk.dim(options.placeholder) + chalk.inverse(" ")
-      : beforeCursor +
-        chalk.inverse(cursorChar) +
-        afterCursor +
-        suggestionSuffix
+      : beforeCursor + chalk.inverse(cursorChar) + afterCursor + suggestionSuffix
 
     // Error message
     const errorDisplay = errorMessage ? chalk.red(` (${errorMessage})`) : ""
@@ -123,9 +106,7 @@ export async function withTextInput(
       cleanup()
 
       // Show final value
-      const displayValue = options.mask
-        ? options.mask.repeat(value.length)
-        : value
+      const displayValue = options.mask ? options.mask.repeat(value.length) : value
       write(
         `${CURSOR_TO_START}${chalk.green("✔")} ${chalk.bold(prompt)} ${chalk.dim(displayValue)}${CLEAR_LINE_END}\n`,
         stream,
@@ -204,8 +185,7 @@ export async function withTextInput(
         // Backspace (127 or 8)
         if (code === 127 || code === 8) {
           if (cursorPosition > 0) {
-            value =
-              value.slice(0, cursorPosition - 1) + value.slice(cursorPosition)
+            value = value.slice(0, cursorPosition - 1) + value.slice(cursorPosition)
             cursorPosition--
           }
           continue
@@ -215,18 +195,14 @@ export async function withTextInput(
         if (code === 4) {
           // Ctrl+D acts as delete
           if (cursorPosition < value.length) {
-            value =
-              value.slice(0, cursorPosition) + value.slice(cursorPosition + 1)
+            value = value.slice(0, cursorPosition) + value.slice(cursorPosition + 1)
           }
           continue
         }
 
         // Tab - accept autocomplete suggestion
         if (code === 9) {
-          const suggestion = getAutocompleteSuggestion(
-            value,
-            options.autocomplete,
-          )
+          const suggestion = getAutocompleteSuggestion(value, options.autocomplete)
           if (suggestion) {
             value = suggestion
             cursorPosition = value.length
@@ -265,8 +241,7 @@ export async function withTextInput(
           const after = value.slice(cursorPosition)
           const trimmed = before.trimEnd()
           const lastSpace = trimmed.lastIndexOf(" ")
-          const newBefore =
-            lastSpace === -1 ? "" : trimmed.slice(0, lastSpace + 1)
+          const newBefore = lastSpace === -1 ? "" : trimmed.slice(0, lastSpace + 1)
           value = newBefore + after
           cursorPosition = newBefore.length
           continue
@@ -274,16 +249,14 @@ export async function withTextInput(
 
         // Regular printable character
         if (code >= 32 && code < 127) {
-          value =
-            value.slice(0, cursorPosition) + char + value.slice(cursorPosition)
+          value = value.slice(0, cursorPosition) + char + value.slice(cursorPosition)
           cursorPosition++
           continue
         }
 
         // Handle UTF-8 characters (multi-byte)
         if (code > 127) {
-          value =
-            value.slice(0, cursorPosition) + char + value.slice(cursorPosition)
+          value = value.slice(0, cursorPosition) + char + value.slice(cursorPosition)
           cursorPosition++
           continue
         }
@@ -309,10 +282,7 @@ export async function withTextInput(
  * const value = await input.waitForSubmit();
  * ```
  */
-export function createTextInput(
-  prompt: string,
-  options: TextInputOptions = {},
-): TextInputInstance {
+export function createTextInput(prompt: string, options: TextInputOptions = {}): TextInputInstance {
   const stream = options.stream ?? process.stdout
   const isTty = isTTY(stream)
 
@@ -320,14 +290,10 @@ export function createTextInput(
   let cursorPosition = value.length
 
   const render = () => {
-    const displayValue = options.mask
-      ? options.mask.repeat(value.length)
-      : value
+    const displayValue = options.mask ? options.mask.repeat(value.length) : value
 
     const suggestion = getAutocompleteSuggestion(value, options.autocomplete)
-    const suggestionSuffix = suggestion
-      ? chalk.dim(suggestion.slice(value.length))
-      : ""
+    const suggestionSuffix = suggestion ? chalk.dim(suggestion.slice(value.length)) : ""
 
     const beforeCursor = displayValue.slice(0, cursorPosition)
     const cursorChar = displayValue[cursorPosition] ?? " "
@@ -336,10 +302,7 @@ export function createTextInput(
     const showPlaceholder = !value && options.placeholder
     const inputDisplay = showPlaceholder
       ? chalk.dim(options.placeholder) + chalk.inverse(" ")
-      : beforeCursor +
-        chalk.inverse(cursorChar) +
-        afterCursor +
-        suggestionSuffix
+      : beforeCursor + chalk.inverse(cursorChar) + afterCursor + suggestionSuffix
 
     const line = `${chalk.cyan("?")} ${chalk.bold(prompt)} ${inputDisplay}`
 
@@ -364,8 +327,7 @@ export function createTextInput(
     },
     render,
     insert(char: string) {
-      value =
-        value.slice(0, cursorPosition) + char + value.slice(cursorPosition)
+      value = value.slice(0, cursorPosition) + char + value.slice(cursorPosition)
       cursorPosition += char.length
     },
     backspace() {
@@ -416,17 +378,11 @@ export interface TextInputInstance {
 /**
  * Find a matching autocomplete suggestion for the current input
  */
-function getAutocompleteSuggestion(
-  value: string,
-  autocomplete?: string[],
-): string | undefined {
+function getAutocompleteSuggestion(value: string, autocomplete?: string[]): string | undefined {
   if (!value || !autocomplete?.length) {
     return undefined
   }
 
   const lowerValue = value.toLowerCase()
-  return autocomplete.find(
-    (item) =>
-      item.toLowerCase().startsWith(lowerValue) && item.length > value.length,
-  )
+  return autocomplete.find((item) => item.toLowerCase().startsWith(lowerValue) && item.length > value.length)
 }
