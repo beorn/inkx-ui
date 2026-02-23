@@ -95,15 +95,14 @@ export function attachSpinner<T>(
 
   spinner.start()
 
-  const wrappedPromise = promise
-    .then((result) => {
-      // Don't auto-complete - let caller control
-      return result
-    })
-    .catch((error) => {
+  async function wrapPromise(): Promise<T> {
+    try {
+      return await promise
+    } catch (error) {
       spinner.fail(error instanceof Error ? error.message : "Failed")
       throw error
-    })
+    }
+  }
 
-  return [wrappedPromise, spinner]
+  return [wrapPromise(), spinner]
 }
