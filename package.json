@@ -75,6 +75,9 @@
   "scripts": {
     "build": "tsc",
     "test": "bun test",
+    "typecheck": "bun x tsc --noEmit",
+    "ci": "bun test && bun run typecheck",
+    "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
     "prepublishOnly": "bun run build"
   },
   "dependencies": {
